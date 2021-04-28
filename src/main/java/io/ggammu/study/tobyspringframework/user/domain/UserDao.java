@@ -12,15 +12,15 @@ import java.sql.SQLException;
 import java.util.Collections;
 
 public class UserDao {
-    private SimpleConnectionMaker simpleConnectionMaker;
+    private ConnectionMaker connectionMaker;
 
     public UserDao() {
-        this.simpleConnectionMaker = new SimpleConnectionMaker();
+        this.connectionMaker = new DConnectionMaker();
     }
 
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = simpleConnectionMaker.makeNewConnection();
+        Connection connection = connectionMaker.makeConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)"
@@ -36,7 +36,7 @@ public class UserDao {
 
     // user 조회를 위한 Template Method
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection connection = simpleConnectionMaker.makeNewConnection();
+        Connection connection = connectionMaker.makeConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "select * from users where id = ?"
