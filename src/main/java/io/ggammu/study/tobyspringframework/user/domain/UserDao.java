@@ -12,11 +12,7 @@ import java.util.Collections;
 
 public class UserDao {
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/toby_spring",
-                "spring",
-                "password");
+        Connection connection = getConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)"
@@ -30,12 +26,18 @@ public class UserDao {
         connection.close();
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException {
+    private Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/toby_spring",
                 "spring",
                 "password");
+
+        return connection;
+    }
+
+    public User get(String id) throws ClassNotFoundException, SQLException {
+        Connection connection = getConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "select * from users where id = ?"
