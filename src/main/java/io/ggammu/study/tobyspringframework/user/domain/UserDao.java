@@ -1,6 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import com.mysql.cj.x.protobuf.MysqlxPrepare;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -10,10 +11,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
-public abstract class UserDao {
+public class UserDao {
+    private SimpleConnectionMaker simpleConnectionMaker;
+
+    public UserDao() {
+        this.simpleConnectionMaker = new SimpleConnectionMaker();
+    }
+
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        Connection connection = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)"
@@ -27,21 +34,9 @@ public abstract class UserDao {
         connection.close();
     }
 
-    protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-/*
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/toby_spring",
-                "spring",
-                "password");
-
-        return connection;
-*/
-
-
     // user 조회를 위한 Template Method
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection connection = getConnection();
+        Connection connection = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "select * from users where id = ?"
@@ -61,7 +56,7 @@ public abstract class UserDao {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new NUserDao();
+        UserDao dao = new UserDao();
 
         User user = new User();
         user.setId("ykcul02");
