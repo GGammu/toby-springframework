@@ -10,7 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
-public class UserDao {
+public abstract class UserDao {
+    // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection connection = getConnection();
 
@@ -26,7 +27,8 @@ public class UserDao {
         connection.close();
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
+    protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+/*
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/toby_spring",
@@ -34,8 +36,10 @@ public class UserDao {
                 "password");
 
         return connection;
-    }
+*/
 
+
+    // user 조회를 위한 Template Method
     public User get(String id) throws ClassNotFoundException, SQLException {
         Connection connection = getConnection();
 
@@ -57,7 +61,7 @@ public class UserDao {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
+        UserDao dao = new NUserDao();
 
         User user = new User();
         user.setId("ykcul02");
