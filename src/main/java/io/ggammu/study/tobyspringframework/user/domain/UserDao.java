@@ -14,8 +14,8 @@ import java.util.Collections;
 public class UserDao {
     private ConnectionMaker connectionMaker;
 
-    public UserDao() {
-        this.connectionMaker = new DConnectionMaker();
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
     // user 등록을 위한 Template Method
@@ -53,22 +53,5 @@ public class UserDao {
         ps.close();
         connection.close();
         return user;
-    }
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
-
-        User user = new User();
-        user.setId("ykcul02");
-        user.setName("황영");
-        user.setPassword("password");
-
-        dao.add(user);
-        System.out.println(user.getId() + " 등록 성공");
-
-        User user2 = dao.get(user.getId());
-        System.out.println(user2.getName());
-        System.out.println(user2.getPassword());
-        System.out.println(user2.getId());
     }
 }
