@@ -1,6 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import com.mysql.cj.x.protobuf.MysqlxPrepare;
+import lombok.RequiredArgsConstructor;
 import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.sql.Connection;
@@ -11,12 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
+@RequiredArgsConstructor
 public class UserDao {
-    private ConnectionMaker connectionMaker;
-
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
-    }
+    private final ConnectionMaker connectionMaker;
 
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
