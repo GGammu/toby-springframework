@@ -26,6 +26,6 @@ public class DaoFactory {
 
     @Bean
     public ConnectionMaker connectionMaker() {
-        return new DConnectionMaker();
+        return new LocalDBConnectionMaker();
     }
 }
