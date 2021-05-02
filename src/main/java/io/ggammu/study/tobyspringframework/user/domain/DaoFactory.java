@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 // Factory Class
 public class DaoFactory {
+
     @Bean
     public UserDao userDao() {
-        UserDao userDao = new UserDao(connectionMaker());
+        UserDao userDao = new UserDao();
+        userDao.setConnectionMaker(connectionMaker());
         return userDao;
     }
 
@@ -28,4 +30,5 @@ public class DaoFactory {
     public ConnectionMaker connectionMaker() {
         return new LocalDBConnectionMaker();
     }
+
 }

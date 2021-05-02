@@ -12,9 +12,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
-@RequiredArgsConstructor
 public class UserDao {
-    private final ConnectionMaker connectionMaker;
+    private ConnectionMaker connectionMaker;
+
+    public void setConnectionMaker(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
 
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
