@@ -4,6 +4,7 @@ import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import lombok.RequiredArgsConstructor;
 import sun.java2d.pipe.SpanShapeRenderer;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -13,15 +14,20 @@ import java.sql.SQLException;
 import java.util.Collections;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public DataSource getDataSource() {
+        System.out.println(this.dataSource);
+        return dataSource;
     }
 
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = connectionMaker.makeConnection();
+        Connection connection = dataSource.getConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "insert into users(id, name, password) values(?, ?, ?)"
@@ -37,7 +43,7 @@ public class UserDao {
 
     // user 조회를 위한 Template Method
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection connection = connectionMaker.makeConnection();
+        Connection connection = dataSource.getConnection();
 
         PreparedStatement ps = connection.prepareStatement(
                 "select * from users where id = ?"
