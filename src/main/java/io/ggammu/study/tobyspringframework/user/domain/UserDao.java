@@ -1,17 +1,10 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
-import lombok.RequiredArgsConstructor;
-import sun.java2d.pipe.SpanShapeRenderer;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 
 public class UserDao {
     private DataSource dataSource;
@@ -60,5 +53,35 @@ public class UserDao {
         ps.close();
         connection.close();
         return user;
+    }
+
+    public void deleteAll() throws SQLException {
+        Connection connection = dataSource.getConnection();
+
+        PreparedStatement ps = connection.prepareStatement(
+                "delete from users"
+        );
+
+        ps.executeUpdate();
+
+        ps.close();
+        connection.close();
+    }
+
+    public int getCount() throws SQLException {
+        Connection connection = dataSource.getConnection();
+
+        PreparedStatement ps = connection.prepareStatement(
+                "select count(*) from users"
+        );
+
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        rs.close();
+        ps.close();
+        connection.close();
+        return count;
     }
 }
