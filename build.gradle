@@ -19,15 +19,17 @@ dependencies {
 
     implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
 
     implementation 'org.junit.platform:junit-platform-launcher:1.7.1'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+
+    runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 test {
