@@ -9,6 +9,7 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.io.PrintWriter;
@@ -46,17 +47,43 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount()).isEqualTo(0);
 
-        User user = new User();
-        user.setId("ykcul02");
-        user.setName("황영");
-        user.setPassword("password");
+        User user1 = new User("1", "user1", "password1");
+        User user2 = new User("2", "user2", "password2");
 
-        dao.add(user);
-        assertThat(dao.getCount()).isEqualTo(1);
+        dao.deleteAll();
 
-        User user2 = dao.get(user.getId());
+        dao.add(user1);
+        dao.add(user2);
+        assertThat(dao.getCount()).isEqualTo(2);
 
-        assertThat(user2.getName()).isEqualTo(user.getName());
-        assertThat(user2.getPassword()).isEqualTo(user.getPassword());
+        User userGet1 = dao.get(user1.getId());
+        assertThat(userGet1.getName()).isEqualTo(user1.getName());
+        assertThat(userGet1.getPassword()).isEqualTo(user1.getPassword());
+
+        User userGet2 = dao.get(user2.getId());
+        assertThat(userGet2.getName()).isEqualTo(user2.getName());
+        assertThat(userGet2.getPassword()).isEqualTo(user2.getPassword());
+    }
+
+    @Test
+    public void count() throws SQLException, ClassNotFoundException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao userDao = context.getBean("userDao", UserDao.class);
+
+        User user1 = new User("1", "user1", "password1");
+        User user2 = new User("2", "user2", "password2");
+        User user3 = new User("3", "user3", "password3");
+
+        userDao.deleteAll();
+        assertThat(userDao.getCount()).isEqualTo(0);
+
+        userDao.add(user1);
+        assertThat(userDao.getCount()).isEqualTo(1);
+
+        userDao.add(user2);
+        assertThat(userDao.getCount()).isEqualTo(2);
+
+        userDao.add(user3);
+        assertThat(userDao.getCount()).isEqualTo(3);
     }
 }
