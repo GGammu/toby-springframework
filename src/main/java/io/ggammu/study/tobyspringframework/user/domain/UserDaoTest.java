@@ -11,11 +11,13 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 public class UserDaoTest {
@@ -85,5 +87,18 @@ public class UserDaoTest {
 
         userDao.add(user3);
         assertThat(userDao.getCount()).isEqualTo(3);
+    }
+
+    @Test
+    public void getUserFailure() throws SQLException, ClassNotFoundException {
+        // given
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao userDao = context.getBean("userDao", UserDao.class);
+
+        userDao.deleteAll();
+        assertThat(userDao.getCount()).isEqualTo(0);
+
+        Throwable thrown = catchThrowable(() -> userDao.get("unknown"));
+        assertThat(thrown).isInstanceOf(EmptyResultDataAccessException.class);
     }
 }
