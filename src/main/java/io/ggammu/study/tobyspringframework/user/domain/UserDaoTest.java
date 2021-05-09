@@ -13,9 +13,12 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
@@ -25,12 +28,13 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { DaoFactory.class })
+@DirtiesContext
 //@ContextConfiguration(locations = "/applicationContext.xml")
 public class UserDaoTest {
     private SummaryGeneratingListener listener = new SummaryGeneratingListener();
-
     @Autowired
     private ApplicationContext context;
+    @Autowired
     private UserDao userDao;
     private User user1;
     private User user2;
@@ -57,8 +61,18 @@ public class UserDaoTest {
     public void setUp() {
 //        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 //        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-        userDao = context.getBean("userDao", UserDao.class);
 
+//        System.out.println("contexttest " + this.context);
+//        System.out.println(this);
+//        userDao = context.getBean("userDao", UserDao.class);
+
+        DataSource dataSource = new SingleConnectionDataSource(
+                "jdbc:mysql://localhost:3306/toby_spring",
+                "spring",
+                "password",
+                true
+        );
+        userDao.setDataSource(dataSource);
         user1 = new User("1", "user1", "password1");
         user2 = new User("2", "user2", "password2");
         user3 = new User("3", "user3", "password3");
