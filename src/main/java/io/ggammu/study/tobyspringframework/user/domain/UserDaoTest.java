@@ -2,7 +2,6 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.TestPlan;
@@ -10,13 +9,9 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -26,15 +21,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { DaoFactory.class })
-@DirtiesContext
+//@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = { TestDaoFactory.class })
+//@DirtiesContext
 //@ContextConfiguration(locations = "/applicationContext.xml")
 public class UserDaoTest {
     private SummaryGeneratingListener listener = new SummaryGeneratingListener();
-    @Autowired
+//    @Autowired
     private ApplicationContext context;
-    @Autowired
+//    @Autowired
     private UserDao userDao;
     private User user1;
     private User user2;
@@ -66,6 +61,7 @@ public class UserDaoTest {
 //        System.out.println(this);
 //        userDao = context.getBean("userDao", UserDao.class);
 
+        userDao = new UserDao();
         DataSource dataSource = new SingleConnectionDataSource(
                 "jdbc:mysql://localhost:3306/toby_spring",
                 "spring",
@@ -73,6 +69,7 @@ public class UserDaoTest {
                 true
         );
         userDao.setDataSource(dataSource);
+
         user1 = new User("1", "user1", "password1");
         user2 = new User("2", "user2", "password2");
         user3 = new User("3", "user3", "password3");
