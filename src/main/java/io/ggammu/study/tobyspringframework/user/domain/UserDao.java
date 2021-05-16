@@ -10,19 +10,23 @@ import java.sql.SQLException;
 
 public class UserDao {
     private DataSource dataSource;
+    private JdbcContext jdbcContext;
+
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public DataSource getDataSource() {
-        System.out.println(this.dataSource);
         return dataSource;
     }
 
     // user 등록을 위한 Template Method
     public void add(final User user) throws ClassNotFoundException, SQLException {
-        jdbcContextWithStatementStrategy(new StateStrategy() {
+        this.jdbcContext.workWithStatementStrategy(new StateStrategy() {
             @Override
             public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
@@ -63,7 +67,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(new StateStrategy() {
+        this.jdbcContext.workWithStatementStrategy(new StateStrategy() {
             @Override
             public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
                 return connection.prepareStatement("delete from users");
@@ -107,22 +111,6 @@ public class UserDao {
 
                 }
             }
-        }
-    }
-
-    public void jdbcContextWithStatementStrategy(StateStrategy stateStrategy) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = stateStrategy.makePrepareStatement(c);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) { try { ps.close(); } catch (SQLException e) { } }
-            if (c!= null) { try { c.close(); } catch (SQLException e) { } }
         }
     }
 }

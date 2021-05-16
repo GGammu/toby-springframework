@@ -12,6 +12,7 @@ public class TestDaoFactory {
     public UserDao userDao() {
         UserDao userDao = new UserDao();
         userDao.setDataSource(dataSource());
+        userDao.setJdbcContext(jdbcContext());
         return userDao;
     }
 
@@ -24,6 +25,14 @@ public class TestDaoFactory {
         simpleDriverDataSource.setPassword("password");
         return simpleDriverDataSource;
     }
+
+    @Bean
+    public JdbcContext jdbcContext() {
+        JdbcContext jdbcContext = new JdbcContext();
+        jdbcContext.setDataSource(dataSource());
+        return jdbcContext;
+    }
+
     @Bean
     public AccountDao accountDao() {
         AccountDao accountDao = new AccountDao(connectionMaker());

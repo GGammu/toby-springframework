@@ -13,11 +13,9 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
@@ -66,14 +64,14 @@ public class UserDaoTest {
 //        userDao = context.getBean("userDao", UserDao.class);
 
 //        userDao = new UserDao();
-        DataSource dataSource = new SingleConnectionDataSource(
-                "jdbc:mysql://localhost:3306/toby_spring",
-                "spring",
-                "password",
-                true
-        );
-        userDao.setDataSource(dataSource);
-
+//        DataSource dataSource = new SingleConnectionDataSource(
+//                "jdbc:mysql://localhost:3306/toby_spring",
+//                "spring",
+//                "password",
+//                true
+//        );
+//        userDao.setDataSource(dataSource);
+//
         user1 = new User("1", "user1", "password1");
         user2 = new User("2", "user2", "password2");
         user3 = new User("3", "user3", "password3");
