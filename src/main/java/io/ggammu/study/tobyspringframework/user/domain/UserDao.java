@@ -22,7 +22,7 @@ public class UserDao {
 
     // user 등록을 위한 Template Method
     public void add(final User user) throws ClassNotFoundException, SQLException {
-        class AddStatement implements StateStrategy {
+        jdbcContextWithStatementStrategy(new StateStrategy() {
             @Override
             public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(
@@ -34,10 +34,7 @@ public class UserDao {
 
                 return ps;
             }
-        }
-
-        StateStrategy st = new AddStatement();
-        jdbcContextWithStatementStrategy(st);
+        });
     }
 
     // user 조회를 위한 Template Method
@@ -66,11 +63,13 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        StateStrategy st = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(st);
+        jdbcContextWithStatementStrategy(new StateStrategy() {
+            @Override
+            public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("delete from users");
+            }
+        });
     }
-
-//    protected abstract PreparedStatement makeStatement(Connection connection) throws SQLException;
 
     public int getCount() throws SQLException {
         Connection connection = null;
