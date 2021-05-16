@@ -21,8 +21,22 @@ public class UserDao {
     }
 
     // user 등록을 위한 Template Method
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        StateStrategy st = new AddStatement(user);
+    public void add(final User user) throws ClassNotFoundException, SQLException {
+        class AddStatement implements StateStrategy {
+            @Override
+            public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(
+                        "insert into users(id, name, password) values(?, ?, ?)"
+                );
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+
+                return ps;
+            }
+        }
+
+        StateStrategy st = new AddStatement();
         jdbcContextWithStatementStrategy(st);
     }
 
