@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class UserDao {
+public class UserDao {
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {
@@ -22,18 +22,8 @@ public abstract class UserDao {
 
     // user 등록을 위한 Template Method
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection connection = dataSource.getConnection();
-
-        PreparedStatement ps = connection.prepareStatement(
-                "insert into users(id, name, password) values(?, ?, ?)"
-        );
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
-
-        ps.executeUpdate();
-        ps.close();
-        connection.close();
+        StateStrategy st = new AddStatement(user);
+        jdbcContextWithStatementStrategy(st);
     }
 
     // user 조회를 위한 Template Method
@@ -66,7 +56,7 @@ public abstract class UserDao {
         jdbcContextWithStatementStrategy(st);
     }
 
-    protected abstract PreparedStatement makeStatement(Connection connection) throws SQLException;
+//    protected abstract PreparedStatement makeStatement(Connection connection) throws SQLException;
 
     public int getCount() throws SQLException {
         Connection connection = null;
@@ -113,7 +103,6 @@ public abstract class UserDao {
 
         try {
             c = dataSource.getConnection();
-            System.out.println("jdbcContextWithStatementStrategy " + c);
             ps = stateStrategy.makePrepareStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
