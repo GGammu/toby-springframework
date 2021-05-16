@@ -62,30 +62,8 @@ public abstract class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection connection = null;
-        PreparedStatement ps = null;
-
-        try {
-            connection = dataSource.getConnection();
-            ps = makeStatement(connection);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-
-                }
-            }
-        }
+        StateStrategy st = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(st);
     }
 
     protected abstract PreparedStatement makeStatement(Connection connection) throws SQLException;
@@ -126,6 +104,23 @@ public abstract class UserDao {
 
                 }
             }
+        }
+    }
+
+    public void jdbcContextWithStatementStrategy(StateStrategy stateStrategy) throws SQLException {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        try {
+            c = dataSource.getConnection();
+            System.out.println("jdbcContextWithStatementStrategy " + c);
+            ps = stateStrategy.makePrepareStatement(c);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            if (ps != null) { try { ps.close(); } catch (SQLException e) { } }
+            if (c!= null) { try { c.close(); } catch (SQLException e) { } }
         }
     }
 }
