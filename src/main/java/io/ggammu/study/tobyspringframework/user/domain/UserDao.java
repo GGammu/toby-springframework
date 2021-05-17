@@ -18,6 +18,8 @@ public class UserDao {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        jdbcContext = new JdbcContext();
+        jdbcContext.setDataSource(dataSource);
     }
 
     public DataSource getDataSource() {
