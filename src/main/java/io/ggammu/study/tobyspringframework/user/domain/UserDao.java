@@ -28,19 +28,11 @@ public class UserDao {
 
     // user 등록을 위한 Template Method
     public void add(final User user) throws ClassNotFoundException, SQLException {
-        this.jdbcContext.workWithStatementStrategy(new StateStrategy() {
-            @Override
-            public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(
-                        "insert into users(id, name, password) values(?, ?, ?)"
-                );
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
-
-                return ps;
-            }
-        });
+        this.jdbcContext.executeSql("insert into users(id, name, password) values(?, ?, ?)",
+                user.getId(),
+                user.getName(),
+                user.getPassword()
+        );
     }
 
     // user 조회를 위한 Template Method
@@ -69,18 +61,9 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        executeSql("delete from users");
+        this.jdbcContext.executeSql("delete from users");
     }
 
-    public void executeSql(String query) throws SQLException {
-        this.jdbcContext.workWithStatementStrategy(
-            new StateStrategy() {
-                @Override
-                public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
-                    return connection.prepareStatement(query);
-                }
-            });
-    }
 
     public int getCount() throws SQLException {
         Connection connection = null;

@@ -27,4 +27,27 @@ public class JdbcContext {
             if (c!= null) { try { c.close(); } catch (SQLException e) { } }
         }
     }
+    public void executeSql(String query) throws SQLException {
+        this.workWithStatementStrategy(new StateStrategy() {
+            @Override
+            public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement(query);
+            }
+        });
+    }
+
+    public void executeSql(String query, String... args) throws SQLException {
+        this.workWithStatementStrategy(new StateStrategy() {
+            @Override
+            public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
+                int idx = 1;
+                PreparedStatement ps = connection.prepareStatement(query);
+
+                for (String value : args) {
+                    ps.setString(idx++, value);
+                }
+                return ps;
+            }
+        });
+    }
 }
