@@ -6,40 +6,54 @@ import java.io.IOException;
 
 public class Calculator {
     public Integer calcSum(String filePath) throws IOException {
-        BufferedReaderCallBack sumCallBack = new BufferedReaderCallBack() {
+//        BufferedReaderCallback sumCallBack = new BufferedReaderCallback() {
+//            @Override
+//            public Integer doSomethigWithReader(BufferedReader br) throws IOException {
+//                Integer sum = 0;
+//                String line = null;
+//                while ((line = br.readLine()) != null) {
+//                    sum += Integer.valueOf(line);
+//                }
+//                return sum;
+//            }
+//        };
+//        return fileReadTemplate(filePath, sumCallBack);
+        LineCallback sumCallback = new LineCallback() {
             @Override
-            public Integer doSomethigWithReader(BufferedReader br) throws IOException {
-                Integer sum = 0;
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sum += Integer.valueOf(line);
-                }
-                return sum;
+            public Integer doSomethingWithLine(String line, Integer value) {
+                return value += Integer.parseInt(line);
             }
         };
-        return fileReadTemplate(filePath, sumCallBack);
+        return lineReadTemplate(filePath, sumCallback, 0);
     }
 
     public Integer calcMultiply(String filePath) throws IOException {
-        BufferedReaderCallBack multiplyCallBack = new BufferedReaderCallBack() {
+//        BufferedReaderCallback multiplyCallBack = new BufferedReaderCallback() {
+//            @Override
+//            public Integer doSomethigWithReader(BufferedReader br) throws IOException {
+//                Integer multiply = 1;
+//                String line = null;
+//                while ((line = br.readLine()) != null) {
+//                    multiply *= Integer.valueOf(line);
+//                }
+//                return multiply;
+//            }
+//        };
+//        return fileReadTemplate(filePath, multiplyCallBack);
+        LineCallback multiplyCallback = new LineCallback() {
             @Override
-            public Integer doSomethigWithReader(BufferedReader br) throws IOException {
-                Integer multiply = 1;
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    multiply *= Integer.valueOf(line);
-                }
-                return multiply;
+            public Integer doSomethingWithLine(String line, Integer value) {
+                return value *= Integer.parseInt(line);
             }
         };
-        return fileReadTemplate(filePath, multiplyCallBack);
+        return lineReadTemplate(filePath, multiplyCallback, 1);
     }
 
-    public Integer fileReadTemplate(String filePath, BufferedReaderCallBack callBack) throws IOException {
+    public Integer fileReadTemplate(String filePath, BufferedReaderCallback callback) throws IOException {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filePath));
-            return callBack.doSomethigWithReader(br);
+            return callback.doSomethigWithReader(br);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw e;
@@ -52,5 +66,30 @@ public class Calculator {
                 }
             }
         }
+    }
+
+    public Integer lineReadTemplate(String filePath, LineCallback callback, Integer initVal) throws IOException {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(filePath));
+            Integer res= initVal;
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                res = callback.doSomethingWithLine(line, res);
+            }
+            return res;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+
     }
 }
