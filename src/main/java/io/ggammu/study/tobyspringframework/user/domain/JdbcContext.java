@@ -27,7 +27,7 @@ public class JdbcContext {
             if (c!= null) { try { c.close(); } catch (SQLException e) { } }
         }
     }
-    public void executeSql(String query) throws SQLException {
+    public void executeSql(final String query) throws SQLException {
         this.workWithStatementStrategy(new StateStrategy() {
             @Override
             public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
@@ -36,7 +36,7 @@ public class JdbcContext {
         });
     }
 
-    public void executeSql(String query, String... args) throws SQLException {
+    public void executeSql(final String query, String... args) throws SQLException {
         this.workWithStatementStrategy(new StateStrategy() {
             @Override
             public PreparedStatement makePrepareStatement(Connection connection) throws SQLException {
