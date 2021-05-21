@@ -19,15 +19,15 @@ class CalculatorTest {
 
     @Test
     void sumOfNumbers() throws IOException {
-        Calculator calculator = new Calculator();
-        int sum = calculator.calcSum(numFilePath);
-        assertThat(sum).isEqualTo(10);
+        assertThat(new Calculator().calcSum(numFilePath)).isEqualTo(10);
     }
 
     @Test
     void multiplyOfNumbers() throws IOException {
-        Calculator calculator = new Calculator();
-        int sum = calculator.calcMultiply(numFilePath);
-        assertThat(sum).isEqualTo(24);
+        assertThat(new Calculator().calcMultiply(numFilePath)).isEqualTo(24);
+    }
+    @Test
+    void concatenateOfNumbers() throws IOException {
+        assertThat(new Calculator().concatenate(numFilePath)).isEqualTo("1234");
     }
 }
