@@ -6,12 +6,12 @@ import java.io.IOException;
 
 public class Calculator {
     public Integer calcSum(String filePath) throws IOException {
-        LineCallback<Integer> sumCallback = (line, value) -> value += Integer.parseInt(line);
+        LineCallback<Integer> sumCallback = ((line, value) -> value += Integer.parseInt(line));
         return lineReadTemplate(filePath, sumCallback, 0);
     }
 
     public Integer calcMultiply(String filePath) throws IOException {
-        LineCallback<Integer> multiplyCallback = (line, value) -> value *= Integer.parseInt(line);
+        LineCallback<Integer> multiplyCallback = ((line, value) -> value *= Integer.parseInt(line));
         return lineReadTemplate(filePath, multiplyCallback, 1);
     }
 

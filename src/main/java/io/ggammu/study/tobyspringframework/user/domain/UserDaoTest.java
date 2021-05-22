@@ -56,22 +56,6 @@ public class UserDaoTest {
 
     @BeforeEach
     public void setUp() {
-//        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-//        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-
-//        System.out.println("contexttest " + this.context);
-//        System.out.println(this);
-//        userDao = context.getBean("userDao", UserDao.class);
-
-//        userDao = new UserDao();
-//        DataSource dataSource = new SingleConnectionDataSource(
-//                "jdbc:mysql://localhost:3306/toby_spring",
-//                "spring",
-//                "password",
-//                true
-//        );
-//        userDao.setDataSource(dataSource);
-//
         user1 = new User("1", "user1", "password1");
         user2 = new User("2", "user2", "password2");
         user3 = new User("3", "user3", "password3");
