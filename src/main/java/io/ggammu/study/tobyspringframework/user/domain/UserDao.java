@@ -1,9 +1,15 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class UserDao {
     private DataSource dataSource;
@@ -47,13 +53,46 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        this.jdbcTemplate.update((con) -> con.prepareStatement("delete from users"));
+        this.jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                return con.prepareStatement("delete from users");
+            }
+        });
+
+//        this.jdbcTemplate.update((con) -> con.prepareStatement("delete from users"));
     }
 
     public int getCount() throws SQLException {
         return this.jdbcTemplate.query(
-                con -> con.prepareStatement("select count(*) form users"),
+                con -> con.prepareStatement("select count(*) from users"),
                 rs -> { rs.next(); return rs.getInt(1); }
         );
+    }
+
+    public List<User> getAll() {
+        return this.jdbcTemplate.query(
+                "select * from users order by id",
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setId(rs.getString("id"));
+                        user.setName(rs.getString("name"));
+                        user.setPassword(rs.getString("password"));
+                        return user;
+                    }
+                }
+        );
+//        return this.jdbcTemplate.query(
+//                "select * from users order by id",
+//                (rs, rowNum) -> {
+//                    User user = new User();
+//                    user.setId(rs.getString("id"));
+//                    user.setName(rs.getString("name"));
+//                    user.setPassword(rs.getString("password"));
+//                    return user;
+//                }
+//        );
     }
 }
