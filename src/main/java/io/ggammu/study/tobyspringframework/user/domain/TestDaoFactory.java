@@ -2,6 +2,7 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -14,6 +15,7 @@ public class TestDaoFactory {
 //        userDao.setDataSource(dataSource());
 //        userDao.setJdbcContext(jdbcContext());
         userDao.setDataSource(dataSource());
+        userDao.setUserRowMapper(userRowMapper());
         return userDao;
     }
 
@@ -27,14 +29,10 @@ public class TestDaoFactory {
         return simpleDriverDataSource;
     }
 
-/*
     @Bean
-    public JdbcContext jdbcContext() {
-        JdbcContext jdbcContext = new JdbcContext();
-        jdbcContext.setDataSource(dataSource());
-        return jdbcContext;
+    public RowMapper<User> userRowMapper() {
+        return new UserRowMapper();
     }
-*/
 
     @Bean
     public AccountDao accountDao() {
