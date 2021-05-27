@@ -2,6 +2,7 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -10,8 +11,8 @@ import javax.sql.DataSource;
 @Configuration
 public class TestDaoFactory {
     @Bean
-    public UserDao userDao() {
-        UserDao userDao = new UserDao();
+    public UserDaoJdbc userDao() {
+        UserDaoJdbc userDao = new UserDaoJdbc();
 //        userDao.setDataSource(dataSource());
 //        userDao.setJdbcContext(jdbcContext());
         userDao.setDataSource(dataSource());

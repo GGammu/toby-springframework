@@ -33,7 +33,7 @@ public class UserDaoTest {
     @Autowired
     private ApplicationContext context;
     @Autowired
-    private UserDao userDao;
+    private UserDaoJdbc userDao;
     private User user1;
     private User user2;
     private User user3;
