@@ -12,6 +12,7 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -142,5 +143,18 @@ public class UserDaoTest {
         assertThat(user1.getId()).isEqualTo(user2.getId());
         assertThat(user1.getName()).isEqualTo(user2.getName());
         assertThat(user1.getPassword()).isEqualTo(user2.getPassword());
+    }
+
+    @Test
+    public void 키_중복_확인() {
+        // given
+        userDao.deleteAll();
+        userDao.add(user1);
+
+        // when
+        Throwable thrown = catchThrowable(() -> userDao.add(user1));
+
+        // then
+        assertThat(thrown).isInstanceOf(DataAccessException.class);
     }
 }
