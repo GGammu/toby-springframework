@@ -3,58 +3,36 @@ package io.ggammu.study.tobyspringframework.user.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
-import org.junit.platform.launcher.TestPlan;
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
-import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
-import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.PrintWriter;
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { TestDaoFactory.class })
-//@DirtiesContext
-//@ContextConfiguration(locations = "/applicationContext.xml")
-public class UserDaoTest {
-    private SummaryGeneratingListener listener = new SummaryGeneratingListener();
+@ContextConfiguration(classes = {TestDaoFactory.class})
+class UserDaoJdbcTest {
     @Autowired
     private ApplicationContext context;
     @Autowired
     private UserDaoJdbc userDao;
+    @Autowired
+    private DataSource dataSource;
+
     private User user1;
     private User user2;
     private User user3;
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDaoTest runner = new UserDaoTest();
-        runner.runOne();
-        TestExecutionSummary summary = runner.listener.getSummary();
-        summary.printTo(new PrintWriter(System.out));
-    }
-
-    private void runOne() {
-        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                .selectors(selectClass(UserDaoTest.class))
-                .build();
-        Launcher launcher = LauncherFactory.create();
-        TestPlan testPlan = launcher.discover(request);
-        launcher.registerTestExecutionListeners(listener);
-        launcher.execute(request);
-    }
 
     @BeforeEach
     public void setUp() {
@@ -150,10 +128,25 @@ public class UserDaoTest {
         // given
         userDao.deleteAll();
         userDao.add(user1);
+//        userDao.add(user1);
         // when
         Throwable thrown = catchThrowable(() -> userDao.add(user1));
 
         // then
-//        assertThat(thrown).isInstanceOf(DataAccessException.class);
+        assertThat(thrown).isInstanceOf(DataAccessException.class);
+    }
+
+    @Test
+    public void 중복_예외_적용() {
+        userDao.deleteAll();
+
+        try {
+            userDao.add(user1);
+            userDao.add(user1);
+        } catch (DuplicateKeyException ex) {
+            SQLException sqlEx = (SQLException) ex.getRootCause();
+            SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+            assertThat(set.translate(null, null, sqlEx)).isInstanceOf(DuplicateKeyException.class);
+        }
     }
 }
