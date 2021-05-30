@@ -36,9 +36,9 @@ class UserDaoJdbcTest {
 
     @BeforeEach
     public void setUp() {
-        user1 = new User("0", "user1", "password1");
-        user2 = new User("1", "user2", "password2");
-        user3 = new User("2", "user3", "password3");
+        user1 = new User("0", "user1", "password1", Level.BASIC, 1, 0);
+        user2 = new User("1", "user2", "password2", Level.SILVER, 55, 10);
+        user3 = new User("2", "user3", "password3", Level.GOLD, 100, 40);
     }
 
     @Test
@@ -52,13 +52,10 @@ class UserDaoJdbcTest {
         assertThat(userDao.getCount()).isEqualTo(2);
 
         User userGet1 = userDao.get(user1.getId());
-        assertThat(userGet1.getName()).isEqualTo(user1.getName());
-        assertThat(userGet1.getPassword()).isEqualTo(user1.getPassword());
+        checkSameUser(userGet1, user1);
 
         User userGet2 = userDao.get(user2.getId());
-        assertThat(userGet2.getName()).isEqualTo(user2.getName());
-        assertThat(userGet2.getPassword()).isEqualTo(user2.getPassword());
-        assertThat(userDao).isEqualTo(context.getBean("userDao"));
+        checkSameUser(userGet2, user2);
     }
 
     @Test
@@ -121,6 +118,9 @@ class UserDaoJdbcTest {
         assertThat(user1.getId()).isEqualTo(user2.getId());
         assertThat(user1.getName()).isEqualTo(user2.getName());
         assertThat(user1.getPassword()).isEqualTo(user2.getPassword());
+        assertThat(user1.getLevel()).isEqualTo(user2.getLevel());
+        assertThat(user1.getLogin()).isEqualTo(user2.getLogin());
+        assertThat(user1.getRecommand()).isEqualTo(user2.getRecommand());
     }
 
     @Test

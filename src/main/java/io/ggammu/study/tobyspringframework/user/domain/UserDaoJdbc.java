@@ -25,10 +25,13 @@ public class UserDaoJdbc implements UserDao {
     public void add(final User user) throws DataAccessException {
         try {
             this.jdbcTemplate.update(
-                    "insert into users(id, name, password) values (?, ?, ?)",
+                    "insert into users(id, name, password, level, login, recommand) values (?, ?, ?, ?, ?, ?)",
                     user.getId(),
                     user.getName(),
-                    user.getPassword()
+                    user.getPassword(),
+                    user.getLevel(),
+                    user.getLogin(),
+                    user.getRecommand()
             );
         } catch (DataAccessException e) {
             throw e;
