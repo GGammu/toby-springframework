@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -148,5 +149,27 @@ class UserDaoJdbcTest {
             SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
             assertThat(set.translate(null, null, sqlEx)).isInstanceOf(DuplicateKeyException.class);
         }
+    }
+
+    @Test
+    public void 사용자_수정() {
+        userDao.deleteAll();
+
+        userDao.add(user1);
+        userDao.add(user2);
+
+        user1.setName("modify");
+        user1.setPassword("passwordm");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(9999);
+
+        userDao.update(user1);
+
+        User user1Update = userDao.get(user1.getId());
+        checkSameUser(user1, user1Update);
+
+        User user2Same = userDao.get(user2.getId());
+        checkSameUser(user2, user2Same);
     }
 }

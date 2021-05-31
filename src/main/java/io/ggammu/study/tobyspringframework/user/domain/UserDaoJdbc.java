@@ -21,6 +21,7 @@ public class UserDaoJdbc implements UserDao {
     }
 
     // user 등록을 위한 Template Method
+    @Override
     public void add(final User user) throws DataAccessException {
         try {
             this.jdbcTemplate.update(
@@ -38,6 +39,7 @@ public class UserDaoJdbc implements UserDao {
     }
 
     // user 조회를 위한 Template Method
+    @Override
     public User get(String id) {
         return this.jdbcTemplate.queryForObject(
                 "select * from users where id = ?",
@@ -46,10 +48,12 @@ public class UserDaoJdbc implements UserDao {
         );
     }
 
+    @Override
     public void deleteAll() {
         this.jdbcTemplate.update((con) -> con.prepareStatement("delete from users"));
     }
 
+    @Override
     public int getCount() {
         return this.jdbcTemplate.query(
                 con -> con.prepareStatement("select count(*) from users"),
@@ -60,11 +64,24 @@ public class UserDaoJdbc implements UserDao {
         );
     }
 
+    @Override
+    public int update(User user1) {
+        return this.jdbcTemplate.update(
+                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
+                user1.getName(),
+                user1.getPassword(),
+                user1.getLevel().initValue(),
+                user1.getLogin(),
+                user1.getRecommend(),
+                user1.getId()
+        );
+    }
+
+    @Override
     public List<User> getAll() {
         return this.jdbcTemplate.query(
                 "select * from users order by id",
                 this.userRowMapper
         );
     }
-
 }
