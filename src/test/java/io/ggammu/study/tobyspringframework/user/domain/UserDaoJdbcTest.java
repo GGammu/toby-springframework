@@ -120,7 +120,7 @@ class UserDaoJdbcTest {
         assertThat(user1.getPassword()).isEqualTo(user2.getPassword());
         assertThat(user1.getLevel()).isEqualTo(user2.getLevel());
         assertThat(user1.getLogin()).isEqualTo(user2.getLogin());
-        assertThat(user1.getRecommand()).isEqualTo(user2.getRecommand());
+        assertThat(user1.getRecommend()).isEqualTo(user2.getRecommend());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -25,13 +24,13 @@ public class UserDaoJdbc implements UserDao {
     public void add(final User user) throws DataAccessException {
         try {
             this.jdbcTemplate.update(
-                    "insert into users(id, name, password, level, login, recommand) values (?, ?, ?, ?, ?, ?)",
+                    "insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
                     user.getId(),
                     user.getName(),
                     user.getPassword(),
-                    user.getLevel(),
+                    user.getLevel().initValue(),
                     user.getLogin(),
-                    user.getRecommand()
+                    user.getRecommend()
             );
         } catch (DataAccessException e) {
             throw e;

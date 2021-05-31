@@ -10,7 +10,7 @@ public enum Level {
     }
 
     public int initValue() {
-        return this.value;
+        return value;
     }
 
     public static Level valueOf(int value) {
