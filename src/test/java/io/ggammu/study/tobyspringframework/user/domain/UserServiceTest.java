@@ -6,13 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestDaoFactory.class })
@@ -63,5 +61,26 @@ class UserServiceTest {
     private void checkLevel(User user, Level expectedLevel) {
         User userUpdate = userDao.get(user.getId());
         assertThat(userUpdate.getLevel()).isEqualTo(expectedLevel);
+    }
+
+    @Test
+    void 사용자_추가_레벨_확인() {
+        // given
+        userDao.deleteAll();
+
+        User userWithLevel = users.get(4);
+        User userWithoutLevel = users.get(0);
+        userWithoutLevel.setLevel(null);
+
+        // when
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        // then
+        User userWithLevelRead = userDao.get("5");
+        User userWithoutLevelRead = userDao.get("1");
+
+        assertThat(userWithLevelRead.getLevel()).isEqualTo(Level.GOLD);
+        assertThat(userWithoutLevelRead.getLevel()).isEqualTo(Level.BASIC);
     }
 }
