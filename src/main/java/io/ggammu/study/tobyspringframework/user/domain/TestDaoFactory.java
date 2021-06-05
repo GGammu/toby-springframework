@@ -53,9 +53,15 @@ public class TestDaoFactory {
     }
 
     @Bean
+    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
+        return new ImplUserLevelUpgradePolicy();
+    }
+
+    @Bean
     public UserService userService() {
         UserService userService = new UserService();
         userService.setUserDao(userDao());
+        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
         return userService;
     }
 }
