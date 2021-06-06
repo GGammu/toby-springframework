@@ -61,7 +61,7 @@ public class TestDaoFactory {
     public UserService userService() {
         UserService userService = new UserService();
         userService.setUserDao(userDao());
-        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
+//        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
         return userService;
     }
 }

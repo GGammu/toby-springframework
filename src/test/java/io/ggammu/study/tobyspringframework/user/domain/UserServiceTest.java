@@ -2,6 +2,7 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_LOGCOUNT_FOR_SILER;
 import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_RECCOMEND_FOR_GOLD;
+import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,5 +94,25 @@ class UserServiceTest {
 
         assertThat(userWithLevelRead.getLevel()).isEqualTo(Level.GOLD);
         assertThat(userWithoutLevelRead.getLevel()).isEqualTo(Level.BASIC);
+    }
+
+    @Test
+    void 사용자_레벨_업그레이드_예외_취소() {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        }
+        catch (TestUserServiceException e) {
+
+        }
+
+        checkLevelUpdate(users.get(1), false);
     }
 }
