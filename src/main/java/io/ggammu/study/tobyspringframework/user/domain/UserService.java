@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import org.springframework.test.context.jdbc.Sql;
 
 @Setter
 @Getter
@@ -15,11 +16,23 @@ public class UserService {
 //    UserLevelUpgradePolicy userLevelUpgradePolicy;
 
     public void upgradeLevels() {
-        List<User> users = userDao.getAll();
-        for (User user : users) {
-            if (canUpgradeLevel(user)) {
-                upgradeLevel(user);
+        // DB Connection 생성
+        // Transaction 시작
+        try {
+            // DAO 메소드 호출
+            List<User> users = userDao.getAll();
+            for (User user : users) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
             }
+            // Transaction Commit
+        }
+        catch (Exception e) {
+            // Transaction Rollback
+        }
+        finally {
+            // DB Connection 종료
         }
     }
 
