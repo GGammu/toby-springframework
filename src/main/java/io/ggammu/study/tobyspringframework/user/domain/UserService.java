@@ -1,10 +1,15 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Setter
 @Getter
@@ -13,11 +18,16 @@ public class UserService {
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
 
     UserDao userDao;
-//    UserLevelUpgradePolicy userLevelUpgradePolicy;
+    //    UserLevelUpgradePolicy userLevelUpgradePolicy;
+    private DataSource dataSource;
 
-    public void upgradeLevels() {
+    public void upgradeLevels() throws SQLException {
         // DB Connection 생성
+        TransactionSynchronizationManager.initSynchronization();
+        Connection c = DataSourceUtils.getConnection(dataSource);
+
         // Transaction 시작
+        c.setAutoCommit(false);
         try {
             // DAO 메소드 호출
             List<User> users = userDao.getAll();
@@ -27,12 +37,18 @@ public class UserService {
                 }
             }
             // Transaction Commit
+            c.commit();
         }
         catch (Exception e) {
             // Transaction Rollback
+            c.rollback();
+            throw e;
         }
         finally {
             // DB Connection 종료
+            DataSourceUtils.releaseConnection(c, dataSource);
+            TransactionSynchronizationManager.unbindResource(this.dataSource);
+            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 
