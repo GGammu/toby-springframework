@@ -7,8 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Setter
@@ -22,12 +26,9 @@ public class UserService {
     private DataSource dataSource;
 
     public void upgradeLevels() throws SQLException {
-        // DB Connection 생성
-        TransactionSynchronizationManager.initSynchronization();
-        Connection c = DataSourceUtils.getConnection(dataSource);
+        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-        // Transaction 시작
-        c.setAutoCommit(false);
         try {
             // DAO 메소드 호출
             List<User> users = userDao.getAll();
@@ -36,19 +37,11 @@ public class UserService {
                     upgradeLevel(user);
                 }
             }
-            // Transaction Commit
-            c.commit();
+            transactionManager.commit(status);
         }
         catch (Exception e) {
-            // Transaction Rollback
-            c.rollback();
+            transactionManager.rollback(status);
             throw e;
-        }
-        finally {
-            // DB Connection 종료
-            DataSourceUtils.releaseConnection(c, dataSource);
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 

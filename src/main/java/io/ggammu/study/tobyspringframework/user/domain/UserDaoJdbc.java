@@ -1,5 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,6 +25,12 @@ public class UserDaoJdbc implements UserDao {
     // user 등록을 위한 Template Method
     @Override
     public void add(final User user) throws DataAccessException {
+        try {
+            InitialContext ctx = new InitialContext();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+
         try {
             this.jdbcTemplate.update(
                     "insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
