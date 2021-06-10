@@ -1,5 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import org.springframework.transaction.PlatformTransactionManager;
+
 public class TestUserService extends UserService {
     private String id;
 

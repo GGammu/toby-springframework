@@ -21,13 +21,11 @@ public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
 
-    UserDao userDao;
-    //    UserLevelUpgradePolicy userLevelUpgradePolicy;
-    private DataSource dataSource;
+    private UserDao userDao;
+    private PlatformTransactionManager transactionManager;
 
     public void upgradeLevels() throws SQLException {
-        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
             // DAO 메소드 호출
@@ -37,10 +35,10 @@ public class UserService {
                     upgradeLevel(user);
                 }
             }
-            transactionManager.commit(status);
+            this.transactionManager.commit(status);
         }
         catch (Exception e) {
-            transactionManager.rollback(status);
+            this.transactionManager.rollback(status);
             throw e;
         }
     }

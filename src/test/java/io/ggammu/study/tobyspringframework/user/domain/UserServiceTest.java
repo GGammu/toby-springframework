@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestDaoFactory.class })
@@ -23,6 +24,9 @@ class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
 
     List<User> users;
 
@@ -105,6 +109,8 @@ class UserServiceTest {
     void 사용자_레벨_업그레이드_예외_취소() {
         UserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
+        testUserService.setTransactionManager(transactionManager);
+
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
