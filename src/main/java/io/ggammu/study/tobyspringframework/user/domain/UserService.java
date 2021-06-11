@@ -1,19 +1,15 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import javax.sql.DataSource;
+import java.util.List;
+import java.util.Properties;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 
 @Setter
 @Getter
@@ -60,6 +56,15 @@ public class UserService {
     protected void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeEmail(user);
+    }
+
+    private void sendUpgradeEmail(User user) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "mail.ksug.org");
+        Session s = Session.getInstance(props, null);
+
+        MimeMessage message = new MimeMessage(s);
     }
 
     public void add(User user) {
