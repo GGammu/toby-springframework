@@ -1,11 +1,21 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import java.net.InetAddress;
+import java.sql.Array;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -61,10 +71,31 @@ public class UserService {
 
     private void sendUpgradeEmail(User user) {
         Properties props = new Properties();
-        props.put("mail.smtp.host", "mail.ksug.org");
-        Session s = Session.getInstance(props, null);
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "465");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.auth", "true");
+
+        Session s = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("ykcul02@gmail.com", "m/fayeaK");
+            }
+        });
 
         MimeMessage message = new MimeMessage(s);
+        try {
+            message.setFrom(new InternetAddress("ykcul02@gmail.com"));
+            message.addRecipients(
+                    Message.RecipientType.TO,
+                    "ykcul02@gmail.com"
+            );
+            message.setSubject("Upgrade");
+            message.setText("yout upgrade");
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void add(User user) {

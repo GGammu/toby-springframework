@@ -12,9 +12,11 @@ repositories {
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter')
-    implementation('org.springframework.boot:spring-boot-starter-data-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.24'
 
