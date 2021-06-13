@@ -16,6 +16,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -70,32 +72,16 @@ public class UserService {
     }
 
     private void sendUpgradeEmail(User user) {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "465");
-        props.put("mail.smtp.ssl.enable", "true");
-        props.put("mail.smtp.auth", "true");
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
 
-        Session s = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("ykcul02@gmail.com", "m/fayeaK");
-            }
-        });
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("ykcul02@gmail.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("사용자 등급이 " + user.getLevel().name());
 
-        MimeMessage message = new MimeMessage(s);
-        try {
-            message.setFrom(new InternetAddress("ykcul02@gmail.com"));
-            message.addRecipients(
-                    Message.RecipientType.TO,
-                    "ykcul02@gmail.com"
-            );
-            message.setSubject("Upgrade");
-            message.setText("yout upgrade");
-            Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+        mailSender.send(mailMessage);
     }
 
     public void add(User user) {
