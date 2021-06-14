@@ -8,12 +8,14 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class User {
+
     private String id;
     private String name;
     private String password;
     private Level level;
     private int login;
     private int recommend;
+    private String email;
 
     public User(String id, String name, String password) {
         this.id = id;
@@ -39,4 +41,5 @@ public class User {
             this.level = nextLevel;
         }
     }
+
 }

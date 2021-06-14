@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,6 +29,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
+    private MailSender mailSender;
 
     private UserDao userDao;
     private PlatformTransactionManager transactionManager;
@@ -72,9 +74,6 @@ public class UserService {
     }
 
     private void sendUpgradeEmail(User user) {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setFrom("ykcul02@gmail.com");
