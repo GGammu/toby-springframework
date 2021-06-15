@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { TestDaoFactory.class })
 class UserServiceTest {
+
     @Autowired
     UserDao userDao;
 
@@ -27,6 +29,9 @@ class UserServiceTest {
 
     @Autowired
     PlatformTransactionManager transactionManager;
+
+    @Autowired
+    MailSender mailSender;
 
     List<User> users;
 
