@@ -39,17 +39,22 @@ public class UserService {
 
         try {
             // DAO 메소드 호출
-            List<User> users = userDao.getAll();
-            for (User user : users) {
-                if (canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                }
-            }
+            upgradeLevelsInternal();
             this.transactionManager.commit(status);
         }
         catch (Exception e) {
             this.transactionManager.rollback(status);
             throw e;
+        }
+    }
+
+    private void upgradeLevelsInternal() {
+        // DAO 메소드 호출
+        List<User> users = userDao.getAll();
+        for (User user : users) {
+            if (canUpgradeLevel(user)) {
+                upgradeLevel(user);
+            }
         }
     }
 
