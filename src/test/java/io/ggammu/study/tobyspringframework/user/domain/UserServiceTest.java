@@ -1,7 +1,8 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_LOGCOUNT_FOR_SILER;
-import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_RECCOMEND_FOR_GOLD;
+import io.ggammu.study.tobyspringframework.service.user.UserService;
+import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_LOGCOUNT_FOR_SILER;
+import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,8 @@
-package io.ggammu.study.tobyspringframework.user.domain;
+package io.ggammu.study.tobyspringframework.service.user;
 
+import io.ggammu.study.tobyspringframework.user.domain.Level;
+import io.ggammu.study.tobyspringframework.user.domain.User;
+import io.ggammu.study.tobyspringframework.user.domain.UserDao;
 import java.net.InetAddress;
 import java.sql.Array;
 import java.sql.SQLException;
@@ -26,35 +29,34 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Setter
 @Getter
-public class UserService {
+public class UserServiceImpl implements UserService {
+
     public static final int MIN_LOGCOUNT_FOR_SILER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
+
     private MailSender mailSender;
 
     private UserDao userDao;
     private PlatformTransactionManager transactionManager;
 
+    @Override
     public void upgradeLevels() throws SQLException {
         TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         try {
             // DAO 메소드 호출
-            upgradeLevelsInternal();
+            List<User> users = userDao.getAll();
+            for (User user : users) {
+                if (canUpgradeLevel(user)) {
+                    upgradeLevel(user);
+                }
+            }
+
             this.transactionManager.commit(status);
         }
         catch (Exception e) {
             this.transactionManager.rollback(status);
             throw e;
-        }
-    }
-
-    private void upgradeLevelsInternal() {
-        // DAO 메소드 호출
-        List<User> users = userDao.getAll();
-        for (User user : users) {
-            if (canUpgradeLevel(user)) {
-                upgradeLevel(user);
-            }
         }
     }
 
@@ -88,8 +90,10 @@ public class UserService {
         mailSender.send(mailMessage);
     }
 
+    @Override
     public void add(User user) {
         if (user.getLevel() == null) user.setLevel(Level.BASIC);
         userDao.add(user);
     }
+
 }

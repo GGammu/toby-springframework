@@ -1,7 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_LOGCOUNT_FOR_SILER;
-import static io.ggammu.study.tobyspringframework.user.domain.UserService.MIN_RECCOMEND_FOR_GOLD;
+import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_LOGCOUNT_FOR_SILER;
+import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
 
 public class ImplUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
     @Override
