@@ -35,28 +35,16 @@ public class UserServiceImpl implements UserService {
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
 
     private MailSender mailSender;
-
     private UserDao userDao;
-    private PlatformTransactionManager transactionManager;
 
     @Override
-    public void upgradeLevels() throws SQLException {
-        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
-
-        try {
-            // DAO 메소드 호출
-            List<User> users = userDao.getAll();
-            for (User user : users) {
-                if (canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                }
+    public void upgradeLevels() {
+        // DAO 메소드 호출
+        List<User> users = userDao.getAll();
+        for (User user : users) {
+            if (canUpgradeLevel(user)) {
+                upgradeLevel(user);
             }
-
-            this.transactionManager.commit(status);
-        }
-        catch (Exception e) {
-            this.transactionManager.rollback(status);
-            throw e;
         }
     }
 

@@ -1,5 +1,8 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.ggammu.study.tobyspringframework.service.user.UserService;
+import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
+import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
 import javax.xml.crypto.Data;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,11 +80,18 @@ public class TestDaoFactory {
 
     @Bean
     public UserService userService() {
-        UserService userService = new UserService();
-        userService.setUserDao(userDao());
+        UserServiceTx userService = new UserServiceTx();
+        userService.setUserService(userServiceImpl());
         userService.setTransactionManager(transactionManager());
-        userService.setMailSender(mailSender());
         return userService;
+    }
+
+    @Bean
+    public UserServiceImpl userServiceImpl() {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+        userServiceImpl.setUserDao(userDao());
+        userServiceImpl.setMailSender(mailSender());
+        return userServiceImpl;
     }
 
 }

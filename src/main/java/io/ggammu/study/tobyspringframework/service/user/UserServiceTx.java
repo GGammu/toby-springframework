@@ -10,9 +10,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 @Setter
 public class UserServiceTx implements UserService {
 
-    private PlatformTransactionManager transactionManager;
-
     UserService userService;
+    private PlatformTransactionManager transactionManager;
 
     @Override
     public void upgradeLevels() throws SQLException {
