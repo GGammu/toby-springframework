@@ -1,8 +1,10 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import io.ggammu.study.tobyspringframework.service.user.UserService;
+import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_LOGCOUNT_FOR_SILER;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
+import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
 import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,9 @@ class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserServiceImpl userServiceImpl;
 
     @Autowired
     PlatformTransactionManager transactionManager;
@@ -63,7 +68,7 @@ class UserServiceTest {
         }
 
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mailSender);
+        userServiceImpl.setMailSender(mailSender);
 
         // when
         try {
@@ -123,9 +128,12 @@ class UserServiceTest {
 
     @Test
     void 사용자_레벨_업그레이드_예외_취소() {
-        UserService testUserService = new TestUserService(users.get(3).getId());
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
-        testUserService.setTransactionManager(transactionManager);
+
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(transactionManager);
+        userServiceTx.setUserService(testUserService);
 
         userDao.deleteAll();
         for (User user : users) {

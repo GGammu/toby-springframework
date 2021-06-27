@@ -1,19 +1,33 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.ggammu.study.tobyspringframework.service.user.UserService;
+import java.sql.SQLException;
+import javax.sql.DataSource;
+import lombok.Setter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-public class TestUserService extends UserService {
+@Setter
+public class TestUserService implements UserService {
     private String id;
+    private UserDao userDao;
 
     TestUserService(String id) {
         this.id = id;
     }
 
-    @Override
-    protected void upgradeLevel(User user) {
+    public void upgradeLevels(User user) throws SQLException {
         if (user.getId().equals(this.id)) {
             throw new TestUserServiceException();
         }
-        super.upgradeLevel(user);
+    }
+
+    @Override
+    public void upgradeLevels() throws SQLException {
+
+    }
+
+    @Override
+    public void add(User user) {
+
     }
 }
