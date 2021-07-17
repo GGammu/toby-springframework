@@ -1,0 +1,41 @@
+package io.ggammu.study.tobyspringframework.user.domain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MockUserDao implements UserDao{
+
+    private List<User> users;
+    private List<User> updated = new ArrayList<>();
+
+    @Override
+    public void add(User user) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public User get(String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<User> getAll() {
+        return this.users;
+    }
+
+    @Override
+    public void deleteAll() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getCount() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int update(User user) {
+        updated.add(user);
+    }
+
+}

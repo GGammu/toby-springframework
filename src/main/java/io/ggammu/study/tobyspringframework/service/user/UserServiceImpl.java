@@ -19,6 +19,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -27,6 +28,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
+@Slf4j
 @Setter
 @Getter
 public class UserServiceImpl implements UserService {
@@ -50,6 +52,7 @@ public class UserServiceImpl implements UserService {
 
     public boolean canUpgradeLevel(User user) {
         Level currentLevel = user.getLevel();
+        log.info("canUpgradeLevel:::::");
         switch (currentLevel) {
             case BASIC:
                 return user.getLogin() >= MIN_LOGCOUNT_FOR_SILER;
