@@ -3,7 +3,7 @@ package io.ggammu.study.tobyspringframework.user.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockUserDao implements UserDao{
+public class MockUserDao implements UserDao {
 
     private List<User> users;
     private List<User> updated = new ArrayList<>();
@@ -35,7 +35,7 @@ public class MockUserDao implements UserDao{
 
     @Override
     public int update(User user) {
-        updated.add(user);
+        return updated.add(user);
     }
 
 }

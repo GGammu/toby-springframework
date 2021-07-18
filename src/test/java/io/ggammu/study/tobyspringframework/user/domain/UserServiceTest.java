@@ -68,7 +68,8 @@ class UserServiceTest {
         }
 
         MockMailSender mockMailSender = new MockMailSender();
-        userServiceImpl.setMailSender(mailSender);
+//        userServiceImpl.setMailSender(mailSender);
+        userServiceImpl.setMailSender(mockMailSender);
 
         // when
         try {
