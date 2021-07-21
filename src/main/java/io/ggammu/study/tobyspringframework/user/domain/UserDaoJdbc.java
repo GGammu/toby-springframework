@@ -73,8 +73,8 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
-    public int update(User user1) {
-        return this.jdbcTemplate.update(
+    public void update(User user1) {
+        this.jdbcTemplate.update(
                 "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
                 user1.getName(),
                 user1.getPassword(),

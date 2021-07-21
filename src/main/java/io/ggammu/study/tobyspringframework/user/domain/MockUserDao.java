@@ -8,6 +8,10 @@ public class MockUserDao implements UserDao {
     private List<User> users;
     private List<User> updated = new ArrayList<>();
 
+    public MockUserDao(List<User> users) {
+        this.users = users;
+    }
+
     @Override
     public void add(User user) {
         throw new UnsupportedOperationException();
@@ -34,8 +38,8 @@ public class MockUserDao implements UserDao {
     }
 
     @Override
-    public int update(User user) {
-        return updated.add(user);
+    public void update(User user) {
+        updated.add(user);
     }
 
 }

@@ -55,12 +55,18 @@ class UserServiceTest {
     }
 
     @Test
-    public void 빈_확인() {
+    public void beanCheck() {
         assertThat(userDao).isNotNull();
     }
 
     @Test
-    public void 레벨_업그레이드() {
+    public void upgradeLevels() {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+
+        userServiceImpl.setUserDao(mockUserDao);
+
         // given
         userDao.deleteAll();
         for (User user : users) {
