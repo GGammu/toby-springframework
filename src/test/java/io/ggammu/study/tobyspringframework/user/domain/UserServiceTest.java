@@ -61,50 +61,33 @@ class UserServiceTest {
 
     @Test
     public void upgradeLevels() {
+        // given
         UserServiceImpl userServiceImpl = new UserServiceImpl();
 
         MockUserDao mockUserDao = new MockUserDao(this.users);
-
         userServiceImpl.setUserDao(mockUserDao);
 
-        // given
-        userDao.deleteAll();
-        for (User user : users) {
-            userDao.add(user);
-        }
-
         MockMailSender mockMailSender = new MockMailSender();
-//        userServiceImpl.setMailSender(mailSender);
         userServiceImpl.setMailSender(mockMailSender);
 
         // when
-        try {
-            userService.upgradeLevels();
-        }
-        catch (Exception e) {
+        userServiceImpl.upgradeLevels();
 
-        }
+        List<User> updated = mockUserDao.getUpdated();
+        assertThat(updated.size()).isEqualTo(2);
+        checkLevelUpdate(updated.get(0), "joytouch", Level.SILVER);
+        checkLevelUpdate(updated.get(1), "madnite1", Level.GOLD);
 
         // then
-        checkLevelUpdate(users.get(0), false);
-        checkLevelUpdate(users.get(1), true);
-        checkLevelUpdate(users.get(2), false);
-        checkLevelUpdate(users.get(3), true);
-        checkLevelUpdate(users.get(4), false);
-
         List<String> request = mockMailSender.getRequest();
         assertThat(request.size()).isEqualTo(2);
         assertThat(request.get(0)).isEqualTo(users.get(1).getEmail());
         assertThat(request.get(1)).isEqualTo(users.get(3).getEmail());
     }
 
-    private void checkLevelUpdate(User user, boolean upgraded) {
-        User updateUser = userDao.get(user.getId());
-        if (upgraded) {
-            assertThat(updateUser.getLevel()).isEqualTo(user.getLevel().nextLevel());
-        } else {
-            assertThat(updateUser.getLevel()).isEqualTo(user.getLevel());
-        }
+    private void checkLevelUpdate(User updated, String expectedId, Level expectedLevel) {
+        assertThat(updated.getId()).isEqualTo(expectedId);
+        assertThat(updated.getLevel()).isEqualTo(expectedLevel);
     }
 
     private void checkLevel(User user, Level expectedLevel) {

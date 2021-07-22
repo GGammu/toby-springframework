@@ -42,4 +42,7 @@ public class MockUserDao implements UserDao {
         updated.add(user);
     }
 
+    public List<User> getUpdated() {
+        return this.updated;
+    }
 }
