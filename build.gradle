@@ -29,6 +29,7 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.11.2'
 
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
 
