@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -89,7 +91,11 @@ class UserServiceTest {
         verify(mockUserDao).update(users.get(3));
         assertThat(users.get(3).getLevel()).isEqualTo(Level.GOLD);
 
-
+        ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(2)).send(mailMessageArgumentCaptor.capture());
+        List<SimpleMailMessage> mailMessages = mailMessageArgumentCaptor.getAllValues();
+        assertThat(mailMessages.get(0).getTo()[0]).isEqualTo(users.get(1).getEmail());
+        assertThat(mailMessages.get(1).getTo()[0]).isEqualTo(users.get(3).getEmail());
     }
 
     private void checkLevelUpdate(User updated, String expectedId, Level expectedLevel) {
