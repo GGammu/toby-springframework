@@ -13,6 +13,7 @@ public class ReflectionTest {
         assertThat(name.length()).isEqualTo(6);
 
         Method lengthMethod = String.class.getMethod("length");
+        assertThat((Integer)lengthMethod.invoke(name)).isEqualTo(6);
 
     }
 }
