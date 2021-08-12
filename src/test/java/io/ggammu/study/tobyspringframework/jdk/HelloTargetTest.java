@@ -16,7 +16,7 @@ class HelloTargetTest {
 
     @Test
     public void dynamicProxy() {
-        Hello proxedHello = (Hello) Proxy.newProxyInstance(
+        Hello proxiedHello = (Hello) Proxy.newProxyInstance(
                 getClass().getClassLoader(),
                 new Class[] { Hello.class },
                 new UppercaseHandler(new HelloTarget()));
