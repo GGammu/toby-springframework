@@ -20,6 +20,8 @@ class HelloTargetTest {
                 getClass().getClassLoader(),
                 new Class[] { Hello.class },
                 new UppercaseHandler(new HelloTarget()));
+
+        assertThat(proxiedHello.sayHello("Toby")).isEqualTo("HELLO TOBY");
     }
 
 }

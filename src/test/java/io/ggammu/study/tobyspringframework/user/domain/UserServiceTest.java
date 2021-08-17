@@ -1,10 +1,12 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.ggammu.study.tobyspringframework.service.user.TransactionHandler;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_LOGCOUNT_FOR_SILER;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
+import java.lang.reflect.Proxy;
 import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,9 +136,19 @@ class UserServiceTest {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(userDao);
 
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setTransactionManager(transactionManager);
-        userServiceTx.setUserService(testUserService);
+//        UserServiceTx userServiceTx = new UserServiceTx();
+//        userServiceTx.setTransactionManager(transactionManager);
+//        userServiceTx.setUserService(testUserService);
+        TransactionHandler txHandler = new TransactionHandler();
+        txHandler.setTarget(testUserService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[] { UserService.class },
+                txHandler
+        );
 
         userDao.deleteAll();
         for (User user : users) {
