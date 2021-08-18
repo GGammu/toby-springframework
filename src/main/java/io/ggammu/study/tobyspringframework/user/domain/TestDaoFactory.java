@@ -1,5 +1,6 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.ggammu.study.tobyspringframework.factorybean.Message;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;

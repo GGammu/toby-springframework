@@ -15,4 +15,8 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
+    <bean id="message" class="io.ggammu.study.tobyspringframework.factorybean.Message">
+        <property name="text" value="test" />
+    </bean>
+
 </beans>

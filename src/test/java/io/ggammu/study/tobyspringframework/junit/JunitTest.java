@@ -1,5 +1,6 @@
 package io.ggammu.study.tobyspringframework.junit;
 
+import io.ggammu.study.tobyspringframework.factorybean.Message;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "/junit.xml")
+//@ContextConfiguration(locations = "/applicationContext.xml")
 public class JunitTest {
 //    static JunitTest testObject;
     @Autowired
     ApplicationContext context;
+
     static Set<JunitTest> testObjects = new HashSet<JunitTest>();
     static ApplicationContext contextObject = null;
+
+//    @Autowired
+//    Message message;
+
+//    @Test
+//    public void test5() {
+//        assertThat(message).isInstanceOf(Message.class);
+//        assertThat(message.getText()).isEqualTo("test");
+//    }
 
     @Test
     public void test1() {
