@@ -8,4 +8,13 @@
         <property name="text" value="Factory Bean" />
     </bean>
 
+    <bean id="userServiceImpl" class="io.ggammu.study.tobyspringframework.service.user.UserServiceImpl" />
+
+    <bean id="userService" class="io.ggammu.study.tobyspringframework.factorybean.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl" />
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="pattern" value="upgradeLevel" />
+        <property name="serviceInterface" value="io.ggammu.study.tobyspringframework.service.user.UserService" />
+    </bean>
+
 </beans>
