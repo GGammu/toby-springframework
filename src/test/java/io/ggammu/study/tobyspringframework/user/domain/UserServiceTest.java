@@ -1,6 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import io.ggammu.study.tobyspringframework.factorybean.Message;
+import io.ggammu.study.tobyspringframework.factorybean.TxProxyFactoryBean;
 import io.ggammu.study.tobyspringframework.service.user.TransactionHandler;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,7 +37,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 @DirtiesContext
 @ContextConfiguration(classes = { TestDaoFactory.class })
 class UserServiceTest {
-
     @Autowired
     UserDao userDao;
 
@@ -50,6 +51,9 @@ class UserServiceTest {
 
     @Autowired
     MailSender mailSender;
+
+    @Autowired
+    ApplicationContext context;
 
     List<User> users;
 
@@ -166,5 +170,32 @@ class UserServiceTest {
         }
 
 //        checkLevelUpdate(users.get(1), false);
+    }
+
+    @Test
+    @DirtiesContext
+    public void upgradeAllOrNothing() {
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+        testUserService.setMailSender(mailSender);
+
+        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService)txProxyFactoryBean.getObject();
+
+        userDao.deleteAll();
+        for (User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            txUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        }
+        catch (TestUserServiceException e) {
+
+        }
+
+        checkLevel(users.get(1), false);
     }
 }

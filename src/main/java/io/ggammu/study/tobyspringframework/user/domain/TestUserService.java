@@ -4,12 +4,18 @@ import io.ggammu.study.tobyspringframework.service.user.UserService;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import lombok.Setter;
+import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Setter
 public class TestUserService implements UserService {
     private String id;
     private UserDao userDao;
+    private MailSender mailSender;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     TestUserService(String id) {
         this.id = id;
