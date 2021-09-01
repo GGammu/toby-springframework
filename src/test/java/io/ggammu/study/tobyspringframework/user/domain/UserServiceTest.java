@@ -196,6 +196,6 @@ class UserServiceTest {
 
         }
 
-        checkLevel(users.get(1), false);
+        checkLevel(users.get(1), Level.SILVER);
     }
 }
