@@ -1,8 +1,5 @@
 package io.ggammu.study.tobyspringframework.jdk.proxy;
 
-import com.zaxxer.hikari.pool.ProxyFactory;
-import io.ggammu.study.tobyspringframework.jdk.Hello;
-import io.ggammu.study.tobyspringframework.jdk.HelloTarget;
 import io.ggammu.study.tobyspringframework.jdk.UppercaseHandler;
 import java.lang.reflect.Proxy;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -32,6 +29,11 @@ public class DynamicProxyTest {
         assertThat(proxiedHello.sayHello("Toby")).isEqualTo("HELLO TOBY");
         assertThat(proxiedHello.sayHi("Toby")).isEqualTo("HI TOBY");
         assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("THANK YOU TOBY");
+    }
+
+    @Test
+    public void pointcutAdvisor() {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
     }
 
     static interface Hello {
