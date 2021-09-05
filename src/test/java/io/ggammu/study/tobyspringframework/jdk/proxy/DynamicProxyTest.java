@@ -49,7 +49,7 @@ public class DynamicProxyTest {
 
         assertThat(proxiedHello.sayHello("Toby")).isEqualTo("HELLO TOBY");
         assertThat(proxiedHello.sayHi("Toby")).isEqualTo("HI TOBY");
-        assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("Thank You Toby");
+        assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("Thank you Toby");
     }
 
     static interface Hello {
