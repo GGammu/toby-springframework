@@ -1,10 +1,14 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
 import io.ggammu.study.tobyspringframework.factorybean.Message;
+import io.ggammu.study.tobyspringframework.service.user.TransactionAdvice;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
 import javax.xml.crypto.Data;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -73,6 +77,28 @@ public class TestDaoFactory {
     }
 
     @Bean
+    public TransactionAdvice transactionAdvice() {
+        TransactionAdvice transactionAdvice = new TransactionAdvice();
+        transactionAdvice.setTransactionManager(transactionManager());
+        return transactionAdvice;
+    }
+
+    @Bean
+    public NameMatchMethodPointcut transactionPointcut() {
+        NameMatchMethodPointcut nameMatchMethodPointcut = new NameMatchMethodPointcut();
+        nameMatchMethodPointcut.setMappedName("upgrade*");
+        return nameMatchMethodPointcut;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor transactionAdvisor() {
+        DefaultPointcutAdvisor defaultPointcutAdvisor = new DefaultPointcutAdvisor();
+        defaultPointcutAdvisor.setPointcut(transactionPointcut());
+        defaultPointcutAdvisor.setAdvice(transactionAdvice());
+        return defaultPointcutAdvisor;
+    }
+
+    @Bean
     public JavaMailSenderImpl mailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("mail.server.com");
@@ -80,19 +106,25 @@ public class TestDaoFactory {
     }
 
     @Bean
+//    public UserService userService() {
+//        UserServiceTx userService = new UserServiceTx();
+//        userService.setUserService(userServiceImpl());
+//        userService.setTransactionManager(transactionManager());
+//        return userService;
+//    }
     public UserService userService() {
-        UserServiceTx userService = new UserServiceTx();
-        userService.setUserService(userServiceImpl());
-        userService.setTransactionManager(transactionManager());
-        return userService;
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(new UserServiceImpl());
+        proxyFactoryBean.setInterceptorNames("transactionAdvice");
+        return (UserService) proxyFactoryBean.getObject();
     }
 
-    @Bean
-    public UserServiceImpl userServiceImpl() {
-        UserServiceImpl userServiceImpl = new UserServiceImpl();
-        userServiceImpl.setUserDao(userDao());
-        userServiceImpl.setMailSender(mailSender());
-        return userServiceImpl;
-    }
+//    @Bean
+//    public UserServiceImpl userServiceImpl() {
+//        UserServiceImpl userServiceImpl = new UserServiceImpl();
+//        userServiceImpl.setUserDao(userDao());
+//        userServiceImpl.setMailSender(mailSender());
+//        return userServiceImpl;
+//    }
 
 }

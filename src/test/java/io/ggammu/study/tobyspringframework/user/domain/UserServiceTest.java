@@ -197,5 +197,6 @@ class UserServiceTest {
         }
 
         checkLevel(users.get(1), Level.SILVER);
+
     }
 }
