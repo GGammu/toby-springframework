@@ -1,5 +1,6 @@
 package io.ggammu.study.tobyspringframework.jdk.proxy;
 
+import io.ggammu.study.tobyspringframework.jdk.Hello;
 import io.ggammu.study.tobyspringframework.jdk.HelloTarget;
 import io.ggammu.study.tobyspringframework.jdk.UppercaseHandler;
 import java.lang.reflect.Proxy;
@@ -8,6 +9,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -66,6 +68,33 @@ public class DynamicProxyTest {
                 };
             }
         };
+        classMethodPoint.setMappedName("sayH*");
+
+        checkAdviced(new HelloTarget(), classMethodPoint, true);
+
+        class HelloWorld extends HelloTarget {};
+        checkAdviced(new HelloTarget(), classMethodPoint, false);
+
+        class HelloToby extends  HelloTarget {};
+        checkAdviced(new HelloToby(), classMethodPoint, true);
+    }
+
+    private void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(target);
+        proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+        Hello proxiedHello = (Hello) proxyFactoryBean.getObject();
+
+        if (adviced) {
+            assertThat(proxiedHello.sayHello("Toby")).isEqualTo("HELLO TOBY");
+            assertThat(proxiedHello.sayHi("Toby")).isEqualTo("HI TOBY");
+            assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("Thank you Toby");
+        }
+        else {
+            assertThat(proxiedHello.sayHello("Toby")).isEqualTo("Hello Toby");
+            assertThat(proxiedHello.sayHi("Toby")).isEqualTo("Hi Toby");
+            assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("Thank you Toby");
+        }
     }
 
     static interface Hello {
