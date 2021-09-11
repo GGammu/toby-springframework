@@ -1,7 +1,5 @@
 package io.ggammu.study.tobyspringframework.jdk.proxy;
 
-import io.ggammu.study.tobyspringframework.jdk.Hello;
-import io.ggammu.study.tobyspringframework.jdk.HelloTarget;
 import io.ggammu.study.tobyspringframework.jdk.UppercaseHandler;
 import java.lang.reflect.Proxy;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -11,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 
@@ -73,7 +70,7 @@ public class DynamicProxyTest {
         checkAdviced(new HelloTarget(), classMethodPoint, true);
 
         class HelloWorld extends HelloTarget {};
-        checkAdviced(new HelloTarget(), classMethodPoint, false);
+        checkAdviced(new HelloWorld(), classMethodPoint, false);
 
         class HelloToby extends  HelloTarget {};
         checkAdviced(new HelloToby(), classMethodPoint, true);
