@@ -19,4 +19,8 @@
         <property name="text" value="test" />
     </bean>
 
+    <bean id="testUserService"
+          class="io.ggammu.study.tobyspringframework.service.user.$TestUserServiceImpl"
+          parent="userService" />
+
 </beans>
