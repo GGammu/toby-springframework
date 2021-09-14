@@ -198,6 +198,14 @@ class UserServiceTest {
         }
 
         checkLevel(users.get(1), Level.SILVER);
+    }
 
+    static class TestUserServiceImpl extends UserServiceImpl {
+        private String id = "madnite1";
+
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) throw new TestUserServiceException();
+            super.upgradeLevel(user);
+        }
     }
 }
