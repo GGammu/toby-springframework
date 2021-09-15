@@ -19,8 +19,16 @@
         <property name="text" value="test" />
     </bean>
 
-    <bean id="testUserService"
-          class="io.ggammu.study.tobyspringframework.service.user.$TestUserServiceImpl"
-          parent="userService" />
+    <bean id="mailSender" class="io.ggammu.study.tobyspringframework.user.domain.DummyMailSender" />
+
+    <bean id="userService"
+          class="io.ggammu.study.tobyspringframework.service.user.UserServiceImpl">
+        <property name="userDao" ref="userDao" />
+        <property name="mailSender" ref="mailSender" />
+    </bean>
+
+    <bean id="testUserSercie"
+          class="io.ggammu.study.tobyspringframework.user.domain.UserServiceTest$TestUserServiceImpl"
+          parent="userServie" />
 
 </beans>

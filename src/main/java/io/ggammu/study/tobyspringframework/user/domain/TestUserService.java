@@ -2,10 +2,8 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 import lombok.Setter;
 import org.springframework.mail.MailSender;
-import org.springframework.transaction.PlatformTransactionManager;
 
 @Setter
 public class TestUserService implements UserService {

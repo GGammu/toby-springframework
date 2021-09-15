@@ -3,36 +3,18 @@ package io.ggammu.study.tobyspringframework.service.user;
 import io.ggammu.study.tobyspringframework.user.domain.Level;
 import io.ggammu.study.tobyspringframework.user.domain.User;
 import io.ggammu.study.tobyspringframework.user.domain.UserDao;
-import java.net.InetAddress;
-import java.sql.Array;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 
 @Slf4j
 @Setter
 @Getter
 public class UserServiceImpl implements UserService {
-
     public static final int MIN_LOGCOUNT_FOR_SILER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
 
@@ -86,5 +68,4 @@ public class UserServiceImpl implements UserService {
         if (user.getLevel() == null) user.setLevel(Level.BASIC);
         userDao.add(user);
     }
-
 }
