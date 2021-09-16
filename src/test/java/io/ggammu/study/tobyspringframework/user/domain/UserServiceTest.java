@@ -1,14 +1,14 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import io.ggammu.study.tobyspringframework.factorybean.Message;
-import io.ggammu.study.tobyspringframework.factorybean.TxProxyFactoryBean;
 import io.ggammu.study.tobyspringframework.service.user.TransactionHandler;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_LOGCOUNT_FOR_SILER;
 import static io.ggammu.study.tobyspringframework.service.user.UserServiceImpl.MIN_RECCOMEND_FOR_GOLD;
-import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,16 +27,12 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @ExtendWith(SpringExtension.class)
 @DirtiesContext
-@ContextConfiguration(classes = { TestDaoFactory.class })
+//@ContextConfiguration(classes = { TestDaoFactory.class })
+@ContextConfiguration(locations = "/applicationContext.xml")
 class UserServiceTest {
     @Autowired
     UserDao userDao;
@@ -45,7 +41,7 @@ class UserServiceTest {
     UserService userService;
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService testUserService;
 
     @Autowired
     PlatformTransactionManager transactionManager;
@@ -174,23 +170,14 @@ class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(userDao);
-        testUserService.setMailSender(mailSender);
-
-        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
         }
 
         try {
-            txUserService.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         }
         catch (TestUserServiceException e) {

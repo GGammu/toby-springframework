@@ -12,11 +12,15 @@
     </bean>
 
     <bean id="userDao" class="io.ggammu.study.tobyspringframework.user.domain.UserDaoJdbc">
-        <property name="dataSource" ref="dataSource"></property>
+        <property name="dataSource" ref="dataSource" />
+        <property name="userRowMapper"  ref="rowMapper" />
     </bean>
 
+    <bean id="rowMapper"
+          class="org.springframework.jdbc.core.RowMapper" />
+
     <bean id="message" class="io.ggammu.study.tobyspringframework.factorybean.Message">
-        <property name="text" value="test" />
+        <constructor-arg name="text" value="test" />
     </bean>
 
     <bean id="mailSender" class="io.ggammu.study.tobyspringframework.user.domain.DummyMailSender" />
@@ -27,8 +31,13 @@
         <property name="mailSender" ref="mailSender" />
     </bean>
 
-    <bean id="testUserSercie"
+    <bean id="transactionManger"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+        <constructor-arg name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="testUserService"
           class="io.ggammu.study.tobyspringframework.user.domain.UserServiceTest$TestUserServiceImpl"
-          parent="userServie" />
+          parent="userService" />
 
 </beans>
