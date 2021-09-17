@@ -17,7 +17,7 @@
     </bean>
 
     <bean id="rowMapper"
-          class="org.springframework.jdbc.core.RowMapper" />
+          class="io.ggammu.study.tobyspringframework.user.domain.UserRowMapper" />
 
     <bean id="message" class="io.ggammu.study.tobyspringframework.factorybean.Message">
         <constructor-arg name="text" value="test" />
@@ -34,6 +34,12 @@
     <bean id="transactionManger"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
         <constructor-arg name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="transactionPointcut"
+          class="io.ggammu.study.tobyspringframework.jdk.proxy.NameMatchClassMethodPointcut">
+        <property name="mappedClassName" value="*NotServiceImpl" />
+        <property name="mappedName" value="upgrade*" />
     </bean>
 
     <bean id="testUserService"

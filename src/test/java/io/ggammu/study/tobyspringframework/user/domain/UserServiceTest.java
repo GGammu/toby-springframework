@@ -195,4 +195,9 @@ class UserServiceTest {
             super.upgradeLevel(user);
         }
     }
+
+    @Test
+    public void advisorAutoProxyCreator() {
+        assertThat(testUserService).isEqualTo(java.lang.reflect.Proxy.class);
+    }
 }
