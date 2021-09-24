@@ -1,5 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.ggammu.study.tobyspringframework.pointcut.Bean;
+import io.ggammu.study.tobyspringframework.pointcut.Target;
 import io.ggammu.study.tobyspringframework.service.user.TransactionHandler;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
