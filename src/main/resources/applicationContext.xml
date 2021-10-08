@@ -47,5 +47,4 @@
     <bean id="testUserService"
           class="io.ggammu.study.tobyspringframework.user.domain.UserServiceTest$TestUserServiceImpl"
           parent="userService" />
-
 </beans>
