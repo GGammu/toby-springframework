@@ -47,4 +47,9 @@
     <bean id="testUserService"
           class="io.ggammu.study.tobyspringframework.user.domain.UserServiceTest$TestUserServiceImpl"
           parent="userService" />
+    
+    <aop:config>
+        <aop:pointcut id="transactionPointcut" expression="execution(* *..*ServiceImpl.upgrade*(..))"/>
+        <aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut" />
+    </aop:config>
 </beans>
