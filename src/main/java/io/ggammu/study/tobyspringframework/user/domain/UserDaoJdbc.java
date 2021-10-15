@@ -13,6 +13,11 @@ public class UserDaoJdbc implements UserDao {
     private JdbcContext jdbcContext;
     private JdbcTemplate jdbcTemplate;
     private RowMapper<User> userRowMapper;
+    private String sqlAdd;
+
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
 
     public void setDataSource (DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -33,7 +38,8 @@ public class UserDaoJdbc implements UserDao {
 
         try {
             this.jdbcTemplate.update(
-                    "insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
+//                    "insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)",
+                    this.sqlAdd,
                     user.getId(),
                     user.getName(),
                     user.getPassword(),

@@ -15,6 +15,7 @@
 
     <bean id="userDao" class="io.ggammu.study.tobyspringframework.user.domain.UserDaoJdbc">
         <property name="dataSource" ref="dataSource" />
+        <property name="sqlAdd" value="insert into users(id, name, password, level, login, recommend) values (?, ?, ?, ?, ?, ?)" />
         <property name="userRowMapper"  ref="rowMapper" />
     </bean>
 
