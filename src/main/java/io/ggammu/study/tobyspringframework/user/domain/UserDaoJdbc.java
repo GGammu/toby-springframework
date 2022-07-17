@@ -44,10 +44,10 @@ public class UserDaoJdbc implements UserDao {
                     this.sqlAdd,
                     user.getId(),
                     user.getName(),
-                    user.getPassword(),
-                    user.getLevel().initValue(),
-                    user.getLogin(),
-                    user.getRecommend()
+                    user.getPassword()
+//                    user.getLevel().initValue(),
+//                    user.getLogin(),
+//                    user.getRecommend()
             );
         } catch (DataAccessException e) {
             throw e;
@@ -86,9 +86,9 @@ public class UserDaoJdbc implements UserDao {
                 "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?",
                 user1.getName(),
                 user1.getPassword(),
-                user1.getLevel().initValue(),
-                user1.getLogin(),
-                user1.getRecommend(),
+//                user1.getLevel().initValue(),
+//                user1.getLogin(),
+//                user1.getRecommend(),
                 user1.getId()
         );
     }

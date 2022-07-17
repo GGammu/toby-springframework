@@ -3,12 +3,11 @@ package io.younghwang.springframewokbasic.user.dao;
 import io.younghwang.springframewokbasic.user.domain.User;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDao {
+public abstract class UserDao {
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection c = getConnection();
 
@@ -47,9 +46,7 @@ public class UserDao {
         return user;
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection c = DriverManager.getConnection("jdbc:h2:tcp://localhost/~/spring-framework-basic", "sa","");
-        return c;
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+
 }
+
