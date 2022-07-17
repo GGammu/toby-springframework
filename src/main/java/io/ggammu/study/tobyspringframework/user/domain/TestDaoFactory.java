@@ -1,23 +1,21 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import io.ggammu.study.tobyspringframework.factorybean.Message;
 import io.ggammu.study.tobyspringframework.service.user.TransactionAdvice;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
-import io.ggammu.study.tobyspringframework.service.user.UserServiceTx;
-import javax.xml.crypto.Data;
+
+import io.younghwang.springframewokbasic.user.domain.User;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
-import org.springframework.mail.MailSender;
+
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 

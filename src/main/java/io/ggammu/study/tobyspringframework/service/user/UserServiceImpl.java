@@ -1,7 +1,7 @@
 package io.ggammu.study.tobyspringframework.service.user;
 
 import io.ggammu.study.tobyspringframework.user.domain.Level;
-import io.ggammu.study.tobyspringframework.user.domain.User;
+import io.younghwang.springframewokbasic.user.domain.User;
 import io.ggammu.study.tobyspringframework.user.domain.UserDao;
 import java.util.List;
 import lombok.Getter;

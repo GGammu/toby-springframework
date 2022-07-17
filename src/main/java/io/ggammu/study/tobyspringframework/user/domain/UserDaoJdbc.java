@@ -2,6 +2,8 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import io.younghwang.springframewokbasic.user.domain.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

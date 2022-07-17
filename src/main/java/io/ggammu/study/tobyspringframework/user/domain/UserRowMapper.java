@@ -1,5 +1,6 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.younghwang.springframewokbasic.user.domain.User;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

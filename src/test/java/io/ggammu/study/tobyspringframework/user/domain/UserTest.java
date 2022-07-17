@@ -1,5 +1,6 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.younghwang.springframewokbasic.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

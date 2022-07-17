@@ -1,5 +1,7 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
+import io.younghwang.springframewokbasic.user.domain.User;
+
 import java.util.List;
 
 public interface UserDao {

@@ -2,6 +2,8 @@ package io.ggammu.study.tobyspringframework.user.domain;
 
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import java.sql.SQLException;
+
+import io.younghwang.springframewokbasic.user.domain.User;
 import lombok.Setter;
 import org.springframework.mail.MailSender;
 

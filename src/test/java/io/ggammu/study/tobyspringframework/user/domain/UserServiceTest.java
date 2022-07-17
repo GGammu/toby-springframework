@@ -1,7 +1,5 @@
 package io.ggammu.study.tobyspringframework.user.domain;
 
-import io.ggammu.study.tobyspringframework.pointcut.Bean;
-import io.ggammu.study.tobyspringframework.pointcut.Target;
 import io.ggammu.study.tobyspringframework.service.user.TransactionHandler;
 import io.ggammu.study.tobyspringframework.service.user.UserService;
 import io.ggammu.study.tobyspringframework.service.user.UserServiceImpl;
@@ -12,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+
+import io.younghwang.springframewokbasic.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
-import org.springframework.aop.framework.ProxyFactoryBean;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;

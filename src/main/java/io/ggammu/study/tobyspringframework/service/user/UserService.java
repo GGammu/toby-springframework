@@ -1,6 +1,6 @@
 package io.ggammu.study.tobyspringframework.service.user;
 
-import io.ggammu.study.tobyspringframework.user.domain.User;
+import io.younghwang.springframewokbasic.user.domain.User;
 import java.sql.SQLException;
 import java.util.List;
 
