@@ -1,6 +1,5 @@
 package io.younghwang.springframewokbasic.user.domain;
 
-import io.ggammu.study.tobyspringframework.user.domain.Level;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class User {
-
     private String id;
     private String name;
     private String password;
@@ -42,5 +40,4 @@ public class User {
 //            this.level = nextLevel;
 //        }
 //    }
-
 }
