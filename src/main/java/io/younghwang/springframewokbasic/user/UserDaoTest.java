@@ -1,16 +1,14 @@
 package io.younghwang.springframewokbasic.user;
 
-import io.younghwang.springframewokbasic.user.dao.ConnectionMaker;
-import io.younghwang.springframewokbasic.user.dao.DConnectionMaker;
 import io.younghwang.springframewokbasic.user.dao.UserDao;
+import io.younghwang.springframewokbasic.user.dao.UserDaoFactory;
 import io.younghwang.springframewokbasic.user.domain.User;
 
 import java.sql.SQLException;
 
 public class UserDaoTest {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        ConnectionMaker connectionMaker = new DConnectionMaker();
-        UserDao dao = new UserDao(connectionMaker);
+        UserDao dao = new UserDaoFactory().userDao();
 
         User user = new User();
         user.setId("ykcul02");
