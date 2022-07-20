@@ -10,6 +10,9 @@ import java.sql.SQLException;
 public class UserDao {
     private ConnectionMaker connectionMaker;
 
+    public UserDao() {
+    }
+
     public UserDao(ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
