@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 public class NUserDao extends UserDao {
     public NUserDao() {
-        super(connectionMaker);
     }
 
     public Connection getConnection() throws ClassNotFoundException, SQLException {
