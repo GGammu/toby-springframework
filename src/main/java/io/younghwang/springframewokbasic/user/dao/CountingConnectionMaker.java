@@ -1,10 +1,11 @@
-package io.ggammu.study.tobyspringframework.user.domain;
+package io.younghwang.springframewokbasic.user.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class CountingConnectionMaker implements ConnectionMaker {
-    int counter = 0;
+    private int count = 0;
+
     private ConnectionMaker realConnectionMaker;
 
     public CountingConnectionMaker(ConnectionMaker realConnectionMaker) {
@@ -13,11 +14,11 @@ public class CountingConnectionMaker implements ConnectionMaker {
 
     @Override
     public Connection makeConnection() throws ClassNotFoundException, SQLException {
-        this.counter++;
-        return this.realConnectionMaker.makeConnection();
+        count++;
+        return realConnectionMaker.makeConnection();
     }
 
-    public int getCounter() {
-        return this.counter;
+    public int getCount() {
+        return count;
     }
 }
