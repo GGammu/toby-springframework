@@ -1,15 +1,13 @@
-package io.ggammu.study.tobyspringframework.user.domain;
+package io.younghwang.springframewokbasic.user.dao;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CountingDaoFactory {
-
     @Bean
-    public UserDaoJdbc userDao() {
-//        return new UserDao(connectionMaker());
-        return new UserDaoJdbc();
+    public UserDao userDao() {
+        return new UserDao(connectionMaker());
     }
 
     @Bean
@@ -19,7 +17,6 @@ public class CountingDaoFactory {
 
     @Bean
     public ConnectionMaker realConnectionMaker() {
-        return new LocalDBConnectionMaker();
+        return new DConnectionMaker();
     }
-
 }
