@@ -7,7 +7,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 class UserDaoTest {
 
@@ -16,12 +15,16 @@ class UserDaoTest {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(UserDaoFactory.class);
         UserDao dao = context.getBean("userDao", UserDao.class);
 
+        dao.deleteAll();
+        assertThat(dao.getCount()).isEqualTo(0);
+
         User user = new User();
         user.setId("ykcul02");
         user.setName("황영");
         user.setPassword("password");
 
         dao.add(user);
+        assertThat(dao.getCount()).isEqualTo(1);
 
         User user2 = dao.get(user.getId());
         assertThat(user2.getName()).isEqualTo(user.getName());
