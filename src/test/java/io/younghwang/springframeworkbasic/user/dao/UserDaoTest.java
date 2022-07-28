@@ -3,25 +3,31 @@ package io.younghwang.springframeworkbasic.user.dao;
 import io.younghwang.springframeworkbasic.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = UserDaoFactory.class)
 class UserDaoTest {
+    @Autowired
+    ApplicationContext context;
+    @Autowired
     private UserDao dao;
     private User user1;
     private User user2;
     private User user3;
+
     @BeforeEach
     public void setUp() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(UserDaoFactory.class);
-        this.dao = context.getBean("userDao", UserDao.class);
         this.user1 = new User("id1", "name1", "password1");
         this.user2 = new User("id2", "name2", "password2");
         this.user3 = new User("id3", "name3", "password3");
