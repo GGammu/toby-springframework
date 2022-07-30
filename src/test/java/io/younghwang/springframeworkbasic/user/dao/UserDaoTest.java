@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = UserDaoFactory.class)
+@ContextConfiguration(classes = TestUserDaoFactory.class)
 class UserDaoTest {
     @Autowired
     ApplicationContext context;
