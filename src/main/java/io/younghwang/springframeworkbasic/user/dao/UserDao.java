@@ -1,9 +1,11 @@
 package io.younghwang.springframeworkbasic.user.dao;
 
 import io.younghwang.springframeworkbasic.user.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -91,37 +93,8 @@ public class UserDao {
         return c.prepareStatement("delete from users");
     }
 
-    public int getCount() throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("select count(*) from users");
-
-            rs = ps.executeQuery();
-            rs.next();
-            int count = rs.getInt(1);
-            return count;
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (c != null) {
-                c.close();
-            }
-        }
+    public int getCount() {
+        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
     }
 
     public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
