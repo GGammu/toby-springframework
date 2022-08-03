@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class UserDao {
     private DataSource dataSource;
@@ -67,6 +68,20 @@ public class UserDao {
 
     public int getCount() {
         return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+    }
+
+    public List<User> getAll() {
+        List<User> users = this.jdbcTemplate.query("select * from users order by id", new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User();
+                user.setId(rs.getString("id"));
+                user.setName(rs.getString("name"));
+                user.setPassword(rs.getString("password"));
+                return user;
+            }
+        });
+        return users;
     }
 
     public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
