@@ -4,6 +4,7 @@ import io.younghwang.springframeworkbasic.user.dao.exception.DuplicateUserIdExce
 import io.younghwang.springframeworkbasic.user.domain.User;
 import org.h2.api.ErrorCode;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
@@ -35,12 +36,16 @@ public class UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void add(final User user) throws DuplicateUserIdException {
-        this.jdbcTemplate.update(
-                "insert into users(id, name, password) values (?, ?, ?)",
-                user.getId(),
-                user.getName(),
-                user.getPassword());
+    public void add(final User user) throws DuplicateUserIdException{
+        try {
+            this.jdbcTemplate.update(
+                    "insert into users(id, name, password) values (?, ?, ?)",
+                    user.getId(),
+                    user.getName(),
+                    user.getPassword());
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateUserIdException(e);
+        }
     }
 
     public User get(String id) {
