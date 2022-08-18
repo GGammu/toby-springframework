@@ -1,10 +1,15 @@
 package io.younghwang.springframeworkbasic.user.dao;
 
+import io.younghwang.springframeworkbasic.user.dao.exception.DuplicateUserIdException;
 import io.younghwang.springframeworkbasic.user.domain.User;
+import org.h2.api.ErrorCode;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -30,7 +35,7 @@ public class UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void add(final User user) throws SQLException {
+    public void add(final User user) throws DuplicateUserIdException {
         this.jdbcTemplate.update(
                 "insert into users(id, name, password) values (?, ?, ?)",
                 user.getId(),
@@ -38,7 +43,7 @@ public class UserDao {
                 user.getPassword());
     }
 
-    public User get(String id) throws SQLException {
+    public User get(String id) {
         return this.jdbcTemplate.queryForObject(
                 "select * from users where id = ?",
                 this.userMapper,
