@@ -2,6 +2,7 @@ package io.younghwang.springframeworkbasic;
 
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoFactory;
+import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -16,8 +17,8 @@ public class SpringFrameworkBasicApplication {
         System.out.println(userDao2);
 
         ApplicationContext context = new AnnotationConfigApplicationContext(UserDaoFactory.class);
-        UserDao userDao3 = context.getBean("userDao", UserDao.class);
-        UserDao userDao4 = context.getBean("userDao", UserDao.class);
+        UserDao userDao3 = context.getBean("userDao", UserDaoJdbc.class);
+        UserDao userDao4 = context.getBean("userDao", UserDaoJdbc.class);
         System.out.println(userDao3);
         System.out.println(userDao4);
     }

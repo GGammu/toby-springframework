@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 public class TestUserDaoFactory {
     @Bean
     public UserDao userDao() {
-        UserDao userDao = new UserDao(dataSource());
+        UserDao userDao = new UserDaoJdbc(dataSource());
         return userDao;
     }
 

@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class NUserDao extends UserDao {
+public class NUserDao extends UserDaoJdbc {
     public NUserDao() {
     }
 
