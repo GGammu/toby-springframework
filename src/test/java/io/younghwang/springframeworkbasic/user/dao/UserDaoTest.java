@@ -1,5 +1,6 @@
 package io.younghwang.springframeworkbasic.user.dao;
 
+import io.younghwang.springframeworkbasic.TestApplicationContext;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestUserDaoFactory.class)
+@ContextConfiguration(classes = TestApplicationContext.class)
 class UserDaoTest {
     @Autowired
     ApplicationContext context;

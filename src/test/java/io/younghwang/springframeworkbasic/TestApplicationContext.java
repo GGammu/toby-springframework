@@ -1,5 +1,8 @@
-package io.younghwang.springframeworkbasic.user.dao;
+package io.younghwang.springframeworkbasic;
 
+import io.younghwang.springframeworkbasic.user.dao.UserDao;
+import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
+import io.younghwang.springframeworkbasic.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -7,7 +10,12 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-public class TestUserDaoFactory {
+public class TestApplicationContext{
+    @Bean
+    public UserService userService() {
+        return new UserService(userDao());
+    };
+
     @Bean
     public UserDao userDao() {
         UserDao userDao = new UserDaoJdbc(dataSource());
