@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.Assert;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,5 +67,26 @@ public class UserServiceTest {
     private void checkLevel(User user, Level expectedLevel) {
         User userUpdated = userDao.get(user.getId());
         assertThat(userUpdated.getLevel()).isEqualTo(expectedLevel);
+    }
+
+    @Test
+    void add() {
+        // given
+        userDao.deleteAll();
+
+        User userWithLevel = users.get(4);
+        User userWithoutLevel = users.get(0);
+        userWithoutLevel.setLevel(null);
+
+        // when
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
+
+        // then
+        User userWithLevelRead = userDao.get(userWithLevel.getId());
+        User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+
+        assertThat(userWithLevelRead.getLevel()).isEqualTo(userWithLevelRead.getLevel());
+        assertThat(userWithLevelRead.getLevel()).isEqualTo(Level.BASIC);
     }
 }
