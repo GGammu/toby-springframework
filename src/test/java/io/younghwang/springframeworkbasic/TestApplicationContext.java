@@ -2,6 +2,8 @@ package io.younghwang.springframeworkbasic;
 
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
+import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
+import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
 import io.younghwang.springframeworkbasic.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +15,13 @@ import javax.sql.DataSource;
 public class TestApplicationContext{
     @Bean
     public UserService userService() {
-        return new UserService(userDao());
+        return new UserService(userDao(), userLevelUpgradePolicy());
     };
 
+    @Bean
+    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
+        return new UserLevelUpgradePolicyImpl();
+    }
     @Bean
     public UserDao userDao() {
         UserDao userDao = new UserDaoJdbc(dataSource());
