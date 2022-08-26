@@ -15,7 +15,10 @@ import javax.sql.DataSource;
 public class TestApplicationContext{
     @Bean
     public UserService userService() {
-        return new UserService(userDao(), userLevelUpgradePolicy());
+        UserService userService = new UserService();
+        userService.setUserDao(userDao());
+        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
+        return userService;
     };
 
     @Bean

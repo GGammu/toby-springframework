@@ -4,6 +4,7 @@ import io.younghwang.springframeworkbasic.TestApplicationContext;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
+import io.younghwang.springframeworkbasic.user.exception.TestUserServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +18,30 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestApplicationContext.class)
 public class UserServiceTest {
+    static class TestUserService extends UserService {
+        private String id;
+
+        public TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(this.id))
+                throw new TestUserServiceException();
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestServiceException extends RuntimeException {
+
+    }
+
     @Autowired
     UserDao userDao;
 
@@ -93,5 +114,25 @@ public class UserServiceTest {
 
         assertThat(userWithLevelRead.getLevel()).isEqualTo(userWithLevelRead.getLevel());
         assertThat(userWithoutLevelRead.getLevel()).isEqualTo(Level.BASIC);
+    }
+
+    @Test
+    void upgradeAllOrNothing() {
+        // given
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+
+        userDao.deleteAll();
+        users.forEach(user -> userDao.add(user));
+
+        // when
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceExceptionClass expected");
+        } catch (TestUserServiceException e) {
+        }
+
+        // then
+        checkLevel(users.get(1), false);
     }
 }
