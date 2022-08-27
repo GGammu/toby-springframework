@@ -18,6 +18,7 @@ public class TestApplicationContext{
         UserService userService = new UserService();
         userService.setUserDao(userDao());
         userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
+        userService.setDataSource(dataSource());
         return userService;
     };
 

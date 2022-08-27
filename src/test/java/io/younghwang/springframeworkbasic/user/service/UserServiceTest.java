@@ -8,10 +8,13 @@ import io.younghwang.springframeworkbasic.user.exception.TestUserServiceExceptio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,6 +51,9 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
 
+    @Autowired
+    DataSource dataSource;
+
     List<User> users;
 
     @BeforeEach
@@ -70,7 +76,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void upgradeLevels() {
+    void upgradeLevels() throws SQLException {
         // given
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
@@ -117,10 +123,11 @@ public class UserServiceTest {
     }
 
     @Test
-    void upgradeAllOrNothing() {
+    void upgradeAllOrNothing() throws Exception{
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
+        testUserService.setDataSource(this.dataSource);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
