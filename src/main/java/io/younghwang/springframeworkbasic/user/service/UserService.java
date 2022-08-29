@@ -3,8 +3,12 @@ package io.younghwang.springframeworkbasic.user.service;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
@@ -19,6 +23,7 @@ public class UserService {
     UserDao userDao;
     DataSource dataSource;
     UserLevelUpgradePolicy userLevelUpgradePolicy;
+    PlatformTransactionManager transactionManager;
 
     public UserService() {
     }
@@ -35,10 +40,12 @@ public class UserService {
         this.userLevelUpgradePolicy = userLevelUpgradePolicy;
     }
 
+    public void setPlatformTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public void upgradeLevels() throws SQLException {
-        TransactionSynchronizationManager.initSynchronization();
-        Connection connection = DataSourceUtils.getConnection(dataSource);
-        connection.setAutoCommit(false);
+        TransactionStatus transaction = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             List<User> users = userDao.getAll();
             users.forEach(user -> {
@@ -46,12 +53,11 @@ public class UserService {
                     upgradeLevel(user);
                 };
             });
-            connection.commit();
+            this.transactionManager.commit(transaction);
         } catch (Exception e) {
-            connection.rollback();
+            this.transactionManager.rollback(transaction);
             throw e;
         } finally {
-            DataSourceUtils.releaseConnection(connection, dataSource);
             TransactionSynchronizationManager.unbindResource(this.dataSource);
             TransactionSynchronizationManager.clearSynchronization();
         }

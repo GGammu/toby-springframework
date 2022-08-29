@@ -12,6 +12,7 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -55,6 +56,9 @@ public class UserServiceTest {
     DataSource dataSource;
 
     List<User> users;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @BeforeEach
     void setUp() {
@@ -128,6 +132,7 @@ public class UserServiceTest {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setDataSource(this.dataSource);
+        testUserService.setPlatformTransactionManager(this.transactionManager);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
