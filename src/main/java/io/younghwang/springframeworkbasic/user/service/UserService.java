@@ -57,9 +57,6 @@ public class UserService {
         } catch (Exception e) {
             this.transactionManager.rollback(transaction);
             throw e;
-        } finally {
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 
