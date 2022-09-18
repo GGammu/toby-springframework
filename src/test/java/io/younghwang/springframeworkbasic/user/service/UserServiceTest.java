@@ -82,6 +82,7 @@ public class UserServiceTest {
     @Test
     void upgradeLevels() throws SQLException {
         // given
+        userService.setPlatformTransactionManager(this.transactionManager);
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
 
