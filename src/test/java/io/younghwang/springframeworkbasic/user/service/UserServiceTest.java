@@ -8,7 +8,6 @@ import io.younghwang.springframeworkbasic.user.exception.TestUserServiceExceptio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.UpperCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,9 +18,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
@@ -63,11 +62,11 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         users = Arrays.asList(
-                new User("id1", "name1", "password1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0),
-                new User("id2", "name2", "password2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 10),
-                new User("id3", "name3", "password3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
-                new User("id4", "name4", "password4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
-                new User("id5", "name5", "password5", Level.GOLD, 100, Integer.MAX_VALUE)
+                new User("id1", "name1", "password1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0, "id1@gmail.com"),
+                new User("id2", "name2", "password2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 10, "id2@gmail.com"),
+                new User("id3", "name3", "password3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1, "id3@gmail.com"),
+                new User("id4", "name4", "password4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD, "id4@gmail.com"),
+                new User("id5", "name5", "password5", Level.GOLD, 100, Integer.MAX_VALUE, "id5@gmail.com")
         );
     }
 
@@ -83,6 +82,7 @@ public class UserServiceTest {
     void upgradeLevels() throws SQLException {
         // given
         userService.setPlatformTransactionManager(this.transactionManager);
+
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
 
