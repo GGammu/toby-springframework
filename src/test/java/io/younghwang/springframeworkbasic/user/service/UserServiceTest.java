@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -54,6 +55,9 @@ public class UserServiceTest {
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    MailSender mailSender;
+
     List<User> users;
 
     @Autowired
@@ -82,6 +86,7 @@ public class UserServiceTest {
     void upgradeLevels() throws SQLException {
         // given
         userService.setPlatformTransactionManager(this.transactionManager);
+        userService.setMailSender(this.mailSender);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
@@ -131,6 +136,7 @@ public class UserServiceTest {
     void upgradeAllOrNothing() throws Exception{
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setMailSender(mailSender);
         testUserService.setUserDao(this.userDao);
         testUserService.setDataSource(this.dataSource);
         testUserService.setPlatformTransactionManager(this.transactionManager);

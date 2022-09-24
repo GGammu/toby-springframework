@@ -2,6 +2,7 @@ package io.younghwang.springframeworkbasic;
 
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
+import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
 import io.younghwang.springframeworkbasic.user.service.UserService;
@@ -10,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -48,5 +52,11 @@ public class TestApplicationContext{
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public MailSender mailSender() {
+        MailSender mailSender = new DummyMailSender();
+        return mailSender;
     }
 }
