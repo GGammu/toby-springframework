@@ -5,14 +5,11 @@ import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
@@ -52,17 +49,21 @@ public class UserService {
     public void upgradeLevels() {
         TransactionStatus transaction = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            List<User> users = userDao.getAll();
-            users.forEach(user -> {
-                if (canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                };
-            });
+            upgradeLevelsInternal();
             this.transactionManager.commit(transaction);
         } catch (Exception e) {
             this.transactionManager.rollback(transaction);
             throw e;
         }
+    }
+
+    private void upgradeLevelsInternal() {
+        List<User> users = userDao.getAll();
+        users.forEach(user -> {
+            if (canUpgradeLevel(user)) {
+                upgradeLevel(user);
+            };
+        });
     }
 
     private boolean canUpgradeLevel(User user) {
