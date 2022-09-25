@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestApplicationContext.class)
+@DirtiesContext
 public class UserServiceTest {
     static class TestUserService extends UserService {
         private String id;
@@ -84,9 +86,12 @@ public class UserServiceTest {
 
     @Test
     void upgradeLevels() throws SQLException {
+
         // given
         userService.setPlatformTransactionManager(this.transactionManager);
-        userService.setMailSender(this.mailSender);
+
+        MockMailSender mockMailSender = new MockMailSender();
+        userService.setMailSender(mockMailSender);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
@@ -100,6 +105,11 @@ public class UserServiceTest {
         checkLevel(users.get(2), false);
         checkLevel(users.get(3), true);
         checkLevel(users.get(4), false);
+
+        List<String> requests = mockMailSender.getRequests();
+        assertThat(requests.size()).isEqualTo(2);
+        assertThat(requests.get(0)).isEqualTo(users.get(1).getEmail());
+        assertThat(requests.get(1)).isEqualTo(users.get(3).getEmail());
     }
 
     private void checkLevel(User user, boolean upgraded) {
