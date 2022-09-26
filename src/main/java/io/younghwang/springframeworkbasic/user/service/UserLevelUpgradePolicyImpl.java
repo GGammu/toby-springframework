@@ -1,11 +1,10 @@
 package io.younghwang.springframeworkbasic.user.service;
 
-import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
 
-import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 public class UserLevelUpgradePolicyImpl implements UserLevelUpgradePolicy {
     @Override

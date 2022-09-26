@@ -20,8 +20,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static io.younghwang.springframeworkbasic.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.fail;
 @ContextConfiguration(classes = TestApplicationContext.class)
 @DirtiesContext
 public class UserServiceTest {
-    static class TestUserService extends UserService {
+    static class TestUserService extends UserServiceImpl {
         private String id;
 
         public TestUserService(String id) {
@@ -53,6 +53,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserServiceImpl userServiceImpl;
 
     @Autowired
     DataSource dataSource;
@@ -88,10 +91,8 @@ public class UserServiceTest {
     void upgradeLevels() throws SQLException {
 
         // given
-        userService.setPlatformTransactionManager(this.transactionManager);
-
         MockMailSender mockMailSender = new MockMailSender();
-        userService.setMailSender(mockMailSender);
+        this.userServiceImpl.setMailSender(mockMailSender);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
@@ -146,17 +147,19 @@ public class UserServiceTest {
     void upgradeAllOrNothing() throws Exception{
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setMailSender(mailSender);
+        testUserService.setMailSender(this.mailSender);
         testUserService.setUserDao(this.userDao);
-        testUserService.setDataSource(this.dataSource);
-        testUserService.setPlatformTransactionManager(this.transactionManager);
+
+        UserServiceTx userServiceTx = new UserServiceTx();
+        userServiceTx.setTransactionManager(this.transactionManager);
+        userServiceTx.setUserService(testUserService);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
 
         // when
         try {
-            testUserService.upgradeLevels();
+            userServiceTx.upgradeLevels();
             fail("TestUserServiceExceptionClass expected");
         } catch (TestUserServiceException e) {
         }
