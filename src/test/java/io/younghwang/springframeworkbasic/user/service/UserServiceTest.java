@@ -1,6 +1,7 @@
 package io.younghwang.springframeworkbasic.user.service;
 
 import io.younghwang.springframeworkbasic.TestApplicationContext;
+import io.younghwang.springframeworkbasic.user.dao.MockUserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
@@ -89,28 +90,33 @@ public class UserServiceTest {
 
     @Test
     void upgradeLevels() throws SQLException {
-
         // given
-        MockMailSender mockMailSender = new MockMailSender();
-        this.userServiceImpl.setMailSender(mockMailSender);
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
 
-        userDao.deleteAll();
-        users.forEach(user -> userDao.add(user));
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        MockMailSender mockMailSender = new MockMailSender();
+        userServiceImpl.setMailSender(mockMailSender);
 
         // when
-        userService.upgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         // then
-        checkLevel(users.get(0), false);
-        checkLevel(users.get(1), true);
-        checkLevel(users.get(2), false);
-        checkLevel(users.get(3), true);
-        checkLevel(users.get(4), false);
+        List<User> updated = mockUserDao.getUpdated();
+        assertThat(updated.size()).isEqualTo(2);
+        checkUserAndLevel(updated.get(0), "id2", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "id4", Level.GOLD);
 
         List<String> requests = mockMailSender.getRequests();
         assertThat(requests.size()).isEqualTo(2);
         assertThat(requests.get(0)).isEqualTo(users.get(1).getEmail());
         assertThat(requests.get(1)).isEqualTo(users.get(3).getEmail());
+    }
+
+    private void checkUserAndLevel(User user, String expectedId, Level expectedLevel) {
+        assertThat(user.getId()).isEqualTo(expectedId);
+        assertThat(user.getLevel()).isEqualTo(expectedLevel);
     }
 
     private void checkLevel(User user, boolean upgraded) {
