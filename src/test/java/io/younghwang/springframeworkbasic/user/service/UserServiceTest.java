@@ -9,8 +9,11 @@ import io.younghwang.springframeworkbasic.user.exception.TestUserServiceExceptio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,6 +28,11 @@ import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MI
 import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestApplicationContext.class)
@@ -93,25 +101,29 @@ public class UserServiceTest {
         // given
         UserServiceImpl userServiceImpl = new UserServiceImpl();
 
-        MockUserDao mockUserDao = new MockUserDao(this.users);
+        UserDao mockUserDao = mock(UserDao.class);
+        when(mockUserDao.getAll()).thenReturn(this.users);
         userServiceImpl.setUserDao(mockUserDao);
 
-        MockMailSender mockMailSender = new MockMailSender();
+        MailSender mockMailSender = mock(MailSender.class);
         userServiceImpl.setMailSender(mockMailSender);
 
         // when
         userServiceImpl.upgradeLevels();
 
         // then
-        List<User> updated = mockUserDao.getUpdated();
-        assertThat(updated.size()).isEqualTo(2);
-        checkUserAndLevel(updated.get(0), "id2", Level.SILVER);
-        checkUserAndLevel(updated.get(1), "id4", Level.GOLD);
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao).update(users.get(1));
+        assertThat(users.get(1).getLevel()).isEqualTo(Level.SILVER);
+        verify(mockUserDao).update(users.get(3));
+        assertThat(users.get(3).getLevel()).isEqualTo(Level.GOLD);
 
-        List<String> requests = mockMailSender.getRequests();
-        assertThat(requests.size()).isEqualTo(2);
-        assertThat(requests.get(0)).isEqualTo(users.get(1).getEmail());
-        assertThat(requests.get(1)).isEqualTo(users.get(3).getEmail());
+        ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(2)).send(mailMessageArgumentCaptor.capture());
+        List<SimpleMailMessage> mailMessages = mailMessageArgumentCaptor.getAllValues();
+        assertThat(mailMessages.get(0).getTo()[0]).isEqualTo(users.get(1).getEmail());
+        assertThat(mailMessages.get(1).getTo()[0]).isEqualTo(users.get(3).getEmail());
     }
 
     private void checkUserAndLevel(User user, String expectedId, Level expectedLevel) {
@@ -150,7 +162,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void upgradeAllOrNothing() throws Exception{
+    void upgradeAllOrNothing() throws Exception {
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setMailSender(this.mailSender);
