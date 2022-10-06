@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -168,9 +169,15 @@ public class UserServiceTest {
         testUserService.setMailSender(this.mailSender);
         testUserService.setUserDao(this.userDao);
 
-        UserServiceTx userServiceTx = new UserServiceTx();
-        userServiceTx.setTransactionManager(this.transactionManager);
-        userServiceTx.setUserService(testUserService);
+        TransactionHandler transactionHandler = new TransactionHandler();
+        transactionHandler.setTarget(testUserService);
+        transactionHandler.setTransactionManager(this.transactionManager);
+        transactionHandler.setPattern("upgradeLevels");
+
+        UserService userServiceTx = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[]{UserService.class},
+                transactionHandler);
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
