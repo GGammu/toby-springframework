@@ -4,6 +4,7 @@ import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
 import io.younghwang.springframeworkbasic.user.service.MockMailSender;
+import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
 import io.younghwang.springframeworkbasic.user.service.UserService;
@@ -21,13 +22,13 @@ import javax.sql.DataSource;
 
 @Configuration
 public class TestApplicationContext{
-    @Bean
-    public UserService userService() {
-        UserServiceTx userService = new UserServiceTx();
-        userService.setTransactionManager(transactionManager());
-        userService.setUserService(userServiceImpl());
-        return userService;
-    };
+//    @Bean
+//    public UserService userService() {
+//        UserServiceTx userService = new UserServiceTx();
+//        userService.setTransactionManager(transactionManager());
+//        userService.setUserService(userServiceImpl());
+//        return userService;
+//    };
 
     @Bean
     public UserServiceImpl userServiceImpl() {
@@ -66,5 +67,20 @@ public class TestApplicationContext{
     public MailSender mailSender() {
         MailSender mailSender = new DummyMailSender();
         return mailSender;
+    }
+
+    @Bean(name = "userService")
+    public TxProxyFactoryBean txProxyFactoryBean() {
+        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
+        txProxyFactoryBean.setTarget(userServiceImpl());
+        txProxyFactoryBean.setTransactionManager(transactionManager());
+        txProxyFactoryBean.setPattern("upgradeLevels");
+        txProxyFactoryBean.setServiceInterface(UserService.class);
+        return txProxyFactoryBean;
+    }
+
+    @Bean
+    public UserService userService() throws Exception {
+        return (UserService) txProxyFactoryBean().getObject();
     }
 }

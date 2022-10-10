@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
@@ -77,6 +78,9 @@ public class UserServiceTest {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
+
+    @Autowired
+    private ApplicationContext context;
 
     @BeforeEach
     void setUp() {
@@ -163,21 +167,16 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     void upgradeAllOrNothing() throws Exception {
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setMailSender(this.mailSender);
         testUserService.setUserDao(this.userDao);
 
-        TransactionHandler transactionHandler = new TransactionHandler();
-        transactionHandler.setTarget(testUserService);
-        transactionHandler.setTransactionManager(this.transactionManager);
-        transactionHandler.setPattern("upgradeLevels");
-
-        UserService userServiceTx = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[]{UserService.class},
-                transactionHandler);
+        TxProxyFactoryBean factoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
+        factoryBean.setTarget(testUserService);
+        UserService userServiceTx = (UserService) factoryBean.getObject();
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
