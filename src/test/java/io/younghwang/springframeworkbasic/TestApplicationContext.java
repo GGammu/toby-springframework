@@ -1,5 +1,8 @@
 package io.younghwang.springframeworkbasic;
 
+import io.younghwang.springframeworkbasic.core.dao.CoreDao;
+import io.younghwang.springframeworkbasic.core.service.CoreService;
+import io.younghwang.springframeworkbasic.core.service.CoreServiceImpl;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
@@ -82,5 +85,27 @@ public class TestApplicationContext{
     @Bean
     public UserService userService() throws Exception {
         return (UserService) txProxyFactoryBean().getObject();
+    }
+
+    @Bean
+    public CoreDao coreDao() {
+        return new CoreDao();
+    }
+
+    @Bean
+    public CoreService coreService() throws Exception {
+        TxProxyFactoryBean factoryBean = new TxProxyFactoryBean();
+        factoryBean.setTarget(coreServiceTarget());
+        factoryBean.setTransactionManager(transactionManager());
+        factoryBean.setPattern("");
+        factoryBean.setServiceInterface(CoreService.class);
+        return (CoreService) factoryBean.getObject();
+    }
+
+    @Bean
+    public CoreServiceImpl coreServiceTarget() {
+        CoreServiceImpl coreService = new CoreServiceImpl();
+        coreService.setDao(coreDao());
+        return coreService;
     }
 }
