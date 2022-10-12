@@ -1,5 +1,6 @@
 package io.younghwang.springframeworkbasic;
 
+import com.zaxxer.hikari.pool.ProxyFactory;
 import io.younghwang.springframeworkbasic.core.dao.CoreDao;
 import io.younghwang.springframeworkbasic.core.service.CoreService;
 import io.younghwang.springframeworkbasic.core.service.CoreServiceImpl;
@@ -7,6 +8,7 @@ import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
 import io.younghwang.springframeworkbasic.user.service.MockMailSender;
+import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
@@ -14,6 +16,9 @@ import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTx;
 import org.mockito.Mock;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -24,7 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
-public class TestApplicationContext{
+public class TestApplicationContext {
 //    @Bean
 //    public UserService userService() {
 //        UserServiceTx userService = new UserServiceTx();
@@ -45,6 +50,7 @@ public class TestApplicationContext{
     public UserLevelUpgradePolicy userLevelUpgradePolicy() {
         return new UserLevelUpgradePolicyImpl();
     }
+
     @Bean
     public UserDao userDao() {
         UserDao userDao = new UserDaoJdbc(dataSource());
@@ -73,18 +79,15 @@ public class TestApplicationContext{
     }
 
     @Bean(name = "userService")
-    public TxProxyFactoryBean txProxyFactoryBean() {
-        TxProxyFactoryBean txProxyFactoryBean = new TxProxyFactoryBean();
-        txProxyFactoryBean.setTarget(userServiceImpl());
-        txProxyFactoryBean.setTransactionManager(transactionManager());
-        txProxyFactoryBean.setPattern("upgradeLevels");
-        txProxyFactoryBean.setServiceInterface(UserService.class);
-        return txProxyFactoryBean;
+    public ProxyFactoryBean transactionProxyFactoryBean() {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.addAdvisor(transactionAdvisor());
+        return proxyFactoryBean;
     }
 
     @Bean
     public UserService userService() throws Exception {
-        return (UserService) txProxyFactoryBean().getObject();
+        return (UserService) transactionProxyFactoryBean().getObject();
     }
 
     @Bean
@@ -107,5 +110,24 @@ public class TestApplicationContext{
         CoreServiceImpl coreService = new CoreServiceImpl();
         coreService.setDao(coreDao());
         return coreService;
+    }
+
+    @Bean
+    public TransactionAdvice transactionAdvice() {
+        TransactionAdvice transactionAdvice = new TransactionAdvice();
+        transactionAdvice.setTransactionManager(transactionManager());
+        return transactionAdvice;
+    }
+
+    @Bean
+    public NameMatchMethodPointcut transactionPointcut() {
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("upgrade*");
+        return pointcut;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor transactionAdvisor() {
+        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
     }
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
@@ -174,9 +175,9 @@ public class UserServiceTest {
         testUserService.setMailSender(this.mailSender);
         testUserService.setUserDao(this.userDao);
 
-        TxProxyFactoryBean factoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
-        factoryBean.setTarget(testUserService);
-        UserService userServiceTx = (UserService) factoryBean.getObject();
+        ProxyFactoryBean proxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+        proxyFactoryBean.setTarget(testUserService);
+        UserService userServiceTx = (UserService) proxyFactoryBean.getObject();
 
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
