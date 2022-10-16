@@ -41,12 +41,8 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = TestApplicationContext.class)
 @DirtiesContext
 public class UserServiceTest {
-    static class TestUserService extends UserServiceImpl {
-        private String id;
-
-        public TestUserService(String id) {
-            this.id = id;
-        }
+    public static class TestUserServiceImpl extends UserServiceImpl {
+        private String id = "id2";
 
         @Override
         protected void upgradeLevel(User user) {
@@ -56,7 +52,7 @@ public class UserServiceTest {
         }
     }
 
-    static class TestServiceException extends RuntimeException {
+    static class TestUserServiceException extends RuntimeException {
 
     }
 
@@ -67,7 +63,7 @@ public class UserServiceTest {
     UserService userService;
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService testUserService;
 
     @Autowired
     DataSource dataSource;
@@ -171,20 +167,12 @@ public class UserServiceTest {
     @DirtiesContext
     void upgradeAllOrNothing() throws Exception {
         // given
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setMailSender(this.mailSender);
-        testUserService.setUserDao(this.userDao);
-
-        ProxyFactoryBean proxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        proxyFactoryBean.setTarget(testUserService);
-        UserService userServiceTx = (UserService) proxyFactoryBean.getObject();
-
         userDao.deleteAll();
         users.forEach(user -> userDao.add(user));
 
         // when
         try {
-            userServiceTx.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserServiceExceptionClass expected");
         } catch (TestUserServiceException e) {
         }

@@ -7,8 +7,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -103,5 +108,27 @@ public class JUnitTest {
         );
         // then
         contextObject = context;
+    }
+
+    @Test
+    void name() {
+        // given
+        // when
+        // then
+//        assertThat(convertToBinary("T", "US-ASCII")).isEqualTo("01010100");
+        String s = Charset.defaultCharset().displayName();
+        System.out.println(s);
+//        assertThat(convertToBinary("語", "Big5")).isEqualTo("10111011 01111001");
+    }
+
+    String convertToBinary(String input, String encoding) {
+        byte[] encoded_input = Charset.forName(encoding)
+                .encode(input)
+                .array();
+        return IntStream.range(0, encoded_input.length)
+                .map(i -> encoded_input[i])
+                .mapToObj(e -> Integer.toBinaryString(e ^ 255))
+                .map(e -> String.format("%1$" + Byte.SIZE + "s", e).replace(" ", "0"))
+                .collect(Collectors.joining(" "));
     }
 }

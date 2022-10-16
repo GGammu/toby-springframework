@@ -1,24 +1,18 @@
 package io.younghwang.springframeworkbasic;
 
-import com.zaxxer.hikari.pool.ProxyFactory;
 import io.younghwang.springframeworkbasic.core.dao.CoreDao;
 import io.younghwang.springframeworkbasic.core.service.CoreService;
 import io.younghwang.springframeworkbasic.core.service.CoreServiceImpl;
+import io.younghwang.springframeworkbasic.jdk.proxy.NameMatchClassMethodPointcut;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
-import io.younghwang.springframeworkbasic.user.service.MockMailSender;
-import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
-import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
-import io.younghwang.springframeworkbasic.user.service.UserServiceTx;
-import org.mockito.Mock;
-import org.springframework.aop.framework.ProxyFactoryBean;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
-import org.springframework.aop.support.NameMatchMethodPointcut;
+import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -30,33 +24,6 @@ import javax.sql.DataSource;
 
 @Configuration
 public class TestApplicationContext {
-//    @Bean
-//    public UserService userService() {
-//        UserServiceTx userService = new UserServiceTx();
-//        userService.setTransactionManager(transactionManager());
-//        userService.setUserService(userServiceImpl());
-//        return userService;
-//    };
-
-    @Bean
-    public UserServiceImpl userServiceImpl() {
-        UserServiceImpl userService = new UserServiceImpl();
-        userService.setUserDao(userDao());
-        userService.setMailSender(mailSender());
-        return userService;
-    }
-
-    @Bean
-    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
-        return new UserLevelUpgradePolicyImpl();
-    }
-
-    @Bean
-    public UserDao userDao() {
-        UserDao userDao = new UserDaoJdbc(dataSource());
-        return userDao;
-    }
-
     @Bean
     public DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -68,6 +35,33 @@ public class TestApplicationContext {
     }
 
     @Bean
+    public UserDao userDao() {
+        UserDao userDao = new UserDaoJdbc(dataSource());
+        return userDao;
+    }
+
+    @Bean
+    public UserServiceImpl userService() {
+        UserServiceImpl userService = new UserServiceImpl();
+        userService.setUserDao(userDao());
+        userService.setMailSender(mailSender());
+        return userService;
+    }
+
+    @Bean
+    public UserServiceTest.TestUserServiceImpl testUserService() {
+        UserServiceTest.TestUserServiceImpl testUserService = new UserServiceTest.TestUserServiceImpl();
+        testUserService.setUserDao(userDao());
+        testUserService.setMailSender(mailSender());
+        return testUserService;
+    }
+
+    @Bean
+    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
+        return new UserLevelUpgradePolicyImpl();
+    }
+
+    @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
@@ -76,18 +70,6 @@ public class TestApplicationContext {
     public MailSender mailSender() {
         MailSender mailSender = new DummyMailSender();
         return mailSender;
-    }
-
-    @Bean(name = "userService")
-    public ProxyFactoryBean transactionProxyFactoryBean() {
-        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
-        proxyFactoryBean.addAdvisor(transactionAdvisor());
-        return proxyFactoryBean;
-    }
-
-    @Bean
-    public UserService userService() throws Exception {
-        return (UserService) transactionProxyFactoryBean().getObject();
     }
 
     @Bean
@@ -113,21 +95,15 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public TransactionAdvice transactionAdvice() {
-        TransactionAdvice transactionAdvice = new TransactionAdvice();
-        transactionAdvice.setTransactionManager(transactionManager());
-        return transactionAdvice;
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
     }
 
     @Bean
-    public NameMatchMethodPointcut transactionPointcut() {
-        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
-        pointcut.setMappedName("upgrade*");
-        return pointcut;
-    }
-
-    @Bean
-    public DefaultPointcutAdvisor transactionAdvisor() {
-        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
+    public NameMatchClassMethodPointcut nameMatchClassMethodPointcut() {
+        NameMatchClassMethodPointcut nameMatchClassMethodPointcut = new NameMatchClassMethodPointcut();
+        nameMatchClassMethodPointcut.setClassFilter("*ServiceImpl");
+        nameMatchClassMethodPointcut.setMappedName("upgrade*");
+        return nameMatchClassMethodPointcut;
     }
 }
