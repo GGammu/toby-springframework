@@ -12,6 +12,7 @@ import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -99,11 +100,17 @@ public class TestApplicationContext {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
-    @Bean
-    public NameMatchClassMethodPointcut nameMatchClassMethodPointcut() {
-        NameMatchClassMethodPointcut nameMatchClassMethodPointcut = new NameMatchClassMethodPointcut();
-        nameMatchClassMethodPointcut.setClassFilter("*ServiceImpl");
-        nameMatchClassMethodPointcut.setMappedName("upgrade*");
-        return nameMatchClassMethodPointcut;
+//    @Bean
+//    public NameMatchClassMethodPointcut nameMatchClassMethodPointcut() {
+//        NameMatchClassMethodPointcut nameMatchClassMethodPointcut = new NameMatchClassMethodPointcut();
+//        nameMatchClassMethodPointcut.setClassFilter("*ServiceImpl");
+//        nameMatchClassMethodPointcut.setMappedName("upgrade*");
+//        return nameMatchClassMethodPointcut;
+//    }
+
+    public AspectJExpressionPointcut transactionPointcut() {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade(..))");
+        return pointcut;
     }
 }
