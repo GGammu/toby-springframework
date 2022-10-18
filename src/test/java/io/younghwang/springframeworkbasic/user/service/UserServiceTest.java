@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 public class UserServiceTest {
     public static class TestUserServiceImpl extends UserServiceImpl {
-        private String id = "id2";
+        private String id = "id4";
 
         @Override
         protected void upgradeLevel(User user) {

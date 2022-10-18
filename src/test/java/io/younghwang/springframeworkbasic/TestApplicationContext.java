@@ -7,6 +7,7 @@ import io.younghwang.springframeworkbasic.jdk.proxy.NameMatchClassMethodPointcut
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
+import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
@@ -14,6 +15,7 @@ import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -108,9 +110,22 @@ public class TestApplicationContext {
 //        return nameMatchClassMethodPointcut;
 //    }
 
+    @Bean
+    public TransactionAdvice transactionAdvice() {
+        TransactionAdvice transactionAdvice = new TransactionAdvice();
+        transactionAdvice.setTransactionManager(transactionManager());
+        return transactionAdvice;
+    }
+
+    @Bean
     public AspectJExpressionPointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade(..))");
+        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
         return pointcut;
+    }
+
+    @Bean
+    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
+        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
     }
 }
