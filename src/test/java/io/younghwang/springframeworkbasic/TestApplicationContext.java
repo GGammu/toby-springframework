@@ -8,6 +8,7 @@ import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
 import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
+import io.younghwang.springframeworkbasic.user.service.TransactionAttributeImpl;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
@@ -22,8 +23,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 public class TestApplicationContext {
@@ -102,18 +105,15 @@ public class TestApplicationContext {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
-//    @Bean
-//    public NameMatchClassMethodPointcut nameMatchClassMethodPointcut() {
-//        NameMatchClassMethodPointcut nameMatchClassMethodPointcut = new NameMatchClassMethodPointcut();
-//        nameMatchClassMethodPointcut.setClassFilter("*ServiceImpl");
-//        nameMatchClassMethodPointcut.setMappedName("upgrade*");
-//        return nameMatchClassMethodPointcut;
-//    }
-
     @Bean
     public TransactionAdvice transactionAdvice() {
         TransactionAdvice transactionAdvice = new TransactionAdvice();
         transactionAdvice.setTransactionManager(transactionManager());
+        Properties properties = new Properties();
+        properties.setProperty("get*", "PROPAGATION_REQUIRED,readOnly,timeout_30");
+        properties.setProperty("upgrade*", "PROPAGATION_REQUIRES_NEW,ISOLATION_SERIALIZABLE");
+        properties.setProperty("*", "PROPAGATION_REQUIRED");
+        transactionAdvice.setTransactionAttributes(properties);
         return transactionAdvice;
     }
 
