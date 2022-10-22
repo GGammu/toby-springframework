@@ -3,15 +3,14 @@ package io.younghwang.springframeworkbasic;
 import io.younghwang.springframeworkbasic.core.dao.CoreDao;
 import io.younghwang.springframeworkbasic.core.service.CoreService;
 import io.younghwang.springframeworkbasic.core.service.CoreServiceImpl;
-import io.younghwang.springframeworkbasic.jdk.proxy.NameMatchClassMethodPointcut;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
 import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
-import io.younghwang.springframeworkbasic.user.service.TransactionAttributeImpl;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
+import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
@@ -23,9 +22,12 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAttribute;
+import org.springframework.transaction.interceptor.TransactionAttributeSource;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Method;
 import java.util.Properties;
 
 @Configuration
@@ -47,7 +49,7 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public UserServiceImpl userService() {
+    public UserService userService() {
         UserServiceImpl userService = new UserServiceImpl();
         userService.setUserDao(userDao());
         userService.setMailSender(mailSender());
@@ -55,8 +57,8 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public UserServiceTest.TestUserServiceImpl testUserService() {
-        UserServiceTest.TestUserServiceImpl testUserService = new UserServiceTest.TestUserServiceImpl();
+    public UserServiceTest.TestUserService testUserService() {
+        UserServiceTest.TestUserService testUserService = new UserServiceTest.TestUserService();
         testUserService.setUserDao(userDao());
         testUserService.setMailSender(mailSender());
         return testUserService;
@@ -110,9 +112,8 @@ public class TestApplicationContext {
         TransactionAdvice transactionAdvice = new TransactionAdvice();
         transactionAdvice.setTransactionManager(transactionManager());
         Properties properties = new Properties();
-        properties.setProperty("get*", "PROPAGATION_REQUIRED,readOnly,timeout_30");
-        properties.setProperty("upgrade*", "PROPAGATION_REQUIRES_NEW,ISOLATION_SERIALIZABLE");
-        properties.setProperty("*", "PROPAGATION_REQUIRED");
+        properties.setProperty("get*", "readOnly");
+        properties.setProperty("*", "");
         transactionAdvice.setTransactionAttributes(properties);
         return transactionAdvice;
     }
@@ -120,7 +121,7 @@ public class TestApplicationContext {
     @Bean
     public AspectJExpressionPointcut transactionPointcut() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* *..*ServiceImpl.upgrade*(..))");
+        pointcut.setExpression("bean(*Service)");
         return pointcut;
     }
 

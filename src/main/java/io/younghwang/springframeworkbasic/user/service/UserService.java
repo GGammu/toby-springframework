@@ -2,8 +2,18 @@ package io.younghwang.springframeworkbasic.user.service;
 
 import io.younghwang.springframeworkbasic.user.domain.User;
 
-public interface UserService {
-    public void add(User user);
+import java.util.List;
 
-    public void upgradeLevels();
+public interface UserService {
+    void add(User user);
+
+    User get(String id);
+
+    List<User> getAll();
+
+    void deleteAll();
+
+    void update(User user);
+
+    void upgradeLevels();
 }

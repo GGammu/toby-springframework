@@ -1,19 +1,16 @@
 package io.younghwang.springframeworkbasic.user.service;
 
 import io.younghwang.springframeworkbasic.TestApplicationContext;
-import io.younghwang.springframeworkbasic.user.dao.MockUserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.domain.Level;
 import io.younghwang.springframeworkbasic.user.domain.User;
-import io.younghwang.springframeworkbasic.user.exception.TestUserServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +27,7 @@ import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MI
 import static io.younghwang.springframeworkbasic.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -41,7 +38,7 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = TestApplicationContext.class)
 @DirtiesContext
 public class UserServiceTest {
-    public static class TestUserServiceImpl extends UserServiceImpl {
+    public static class TestUserService extends UserServiceImpl {
         private String id = "id4";
 
         @Override
@@ -50,6 +47,15 @@ public class UserServiceTest {
                 throw new TestUserServiceException();
             super.upgradeLevel(user);
         }
+
+        @Override
+        public List<User> getAll() {
+            super.getAll().forEach(user -> {
+                super.update(user);
+            });
+            return null;
+        }
+
     }
 
     static class TestUserServiceException extends RuntimeException {
@@ -180,4 +186,15 @@ public class UserServiceTest {
         // then
         checkLevel(users.get(1), false);
     }
+
+    // TODO : read only 적용 재시도 필요
+//    @Test
+//    void readOnlyTransactionAttribute() {
+    // given
+    // when
+    // then
+//        assertThrows(TransientDataAccessResourceException.class, () -> {
+//            testUserService.getAll();
+//        });
+//    }
 }
