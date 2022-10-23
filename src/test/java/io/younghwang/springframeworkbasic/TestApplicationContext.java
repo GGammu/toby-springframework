@@ -107,26 +107,26 @@ public class TestApplicationContext {
         return new DefaultAdvisorAutoProxyCreator();
     }
 
-    @Bean
-    public TransactionAdvice transactionAdvice() {
-        TransactionAdvice transactionAdvice = new TransactionAdvice();
-        transactionAdvice.setTransactionManager(transactionManager());
-        Properties properties = new Properties();
-        properties.setProperty("get*", "readOnly");
-        properties.setProperty("*", "");
-        transactionAdvice.setTransactionAttributes(properties);
-        return transactionAdvice;
-    }
+//    @Bean
+//    public TransactionAdvice transactionAdvice() {
+//        TransactionAdvice transactionAdvice = new TransactionAdvice();
+//        transactionAdvice.setTransactionManager(transactionManager());
+//        Properties properties = new Properties();
+//        properties.setProperty("get*", "readOnly");
+//        properties.setProperty("*", "");
+//        transactionAdvice.setTransactionAttributes(properties);
+//        return transactionAdvice;
+//    }
 
-    @Bean
-    public AspectJExpressionPointcut transactionPointcut() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("bean(*Service)");
-        return pointcut;
-    }
+//    @Bean
+//    public AspectJExpressionPointcut transactionPointcut() {
+//        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+//        pointcut.setExpression("bean(*Service)");
+//        return pointcut;
+//    }
 
-    @Bean
-    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
-        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
-    }
+//    @Bean
+//    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
+//        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
+//    }
 }
