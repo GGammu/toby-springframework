@@ -6,31 +6,25 @@ import io.younghwang.springframeworkbasic.core.service.CoreServiceImpl;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.dao.UserDaoJdbc;
 import io.younghwang.springframeworkbasic.user.service.DummyMailSender;
-import io.younghwang.springframeworkbasic.user.service.TransactionAdvice;
 import io.younghwang.springframeworkbasic.user.service.TxProxyFactoryBean;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicy;
 import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImpl;
 import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.mail.MailSender;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAttribute;
-import org.springframework.transaction.interceptor.TransactionAttributeSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
-import java.util.Properties;
 
 @Configuration
+@EnableTransactionManagement
 public class TestApplicationContext {
     @Bean
     public DataSource dataSource() {
@@ -102,31 +96,31 @@ public class TestApplicationContext {
         return coreService;
     }
 
-    @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return new DefaultAdvisorAutoProxyCreator();
-    }
+//    @Bean
+//    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+//        return new DefaultAdvisorAutoProxyCreator();
+//    }
 
-    @Bean
-    public TransactionAdvice transactionAdvice() {
-        TransactionAdvice transactionAdvice = new TransactionAdvice();
-        transactionAdvice.setTransactionManager(transactionManager());
-        Properties properties = new Properties();
-        properties.setProperty("get*", "readOnly");
-        properties.setProperty("*", "");
-        transactionAdvice.setTransactionAttributes(properties);
-        return transactionAdvice;
-    }
+//    @Bean
+//    public TransactionAdvice transactionAdvice() {
+//        TransactionAdvice transactionAdvice = new TransactionAdvice();
+//        transactionAdvice.setTransactionManager(transactionManager());
+//        Properties properties = new Properties();
+//        properties.setProperty("get*", "readOnly");
+//        properties.setProperty("*", "");
+//        transactionAdvice.setTransactionAttributes(properties);
+//        return transactionAdvice;
+//    }
 
-    @Bean
-    public AspectJExpressionPointcut transactionPointcut() {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("bean(*Service)");
-        return pointcut;
-    }
+//    @Bean
+//    public AspectJExpressionPointcut transactionPointcut() {
+//        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+//        pointcut.setExpression("bean(*Service)");
+//        return pointcut;
+//    }
 
-    @Bean
-    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
-        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
-    }
+//    @Bean
+//    public DefaultPointcutAdvisor defaultPointcutAdvisor() {
+//        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
+//    }
 }
