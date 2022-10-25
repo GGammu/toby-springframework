@@ -13,10 +13,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -196,4 +199,23 @@ public class UserServiceTest {
 //            testUserService.getAll();
 //        });
 //    }
+
+
+    @Test
+    @Transactional
+    @Rollback(false)
+    void transactionSync() {
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        TransactionStatus status = transactionManager.getTransaction(txDefinition);
+        // when
+
+        try {
+            userService.deleteAll();
+
+            userService.add(users.get(0));
+            userService.add(users.get(1));
+        } finally {
+            transactionManager.rollback(status);
+        }
+    }
 }
