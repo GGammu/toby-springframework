@@ -12,7 +12,6 @@ import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImp
 import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -22,6 +21,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
@@ -38,7 +39,10 @@ public class TestApplicationContext {
 
     @Bean
     public UserDao userDao() {
-        UserDao userDao = new UserDaoJdbc(dataSource());
+        UserDaoJdbc userDao = new UserDaoJdbc(dataSource());
+        Map<String, String> sqlMap = new HashMap();
+        sqlMap.put("add", "insert into users(id, name, password, level, login, recommend, email) values (?, ?, ?, ?, ?, ?, ?)");
+        userDao.setSqlMap(sqlMap);
         return userDao;
     }
 

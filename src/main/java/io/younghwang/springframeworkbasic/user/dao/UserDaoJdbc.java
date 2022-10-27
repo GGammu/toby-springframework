@@ -9,10 +9,21 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
+    private String sqlAdd;
+    private Map<String, String> sqlMap;
+
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
+
+    public void setSqlMap(Map<String, String> sqlMap) {
+        this.sqlMap = sqlMap;
+    }
 
     private RowMapper<User> userMapper = new RowMapper<User>() {
         @Override
@@ -43,7 +54,7 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public void add(final User user) {
         this.jdbcTemplate.update(
-                "insert into users(id, name, password, level, login, recommend, email) values (?, ?, ?, ?, ?, ?, ?)",
+                this.sqlMap.get("add"),
                 user.getId(),
                 user.getName(),
                 user.getPassword(),
@@ -80,7 +91,8 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public void update(User user) {
-        this.jdbcTemplate.update("update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?",
+        this.jdbcTemplate.update(
+                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?",
                 user.getName(),
                 user.getPassword(),
                 user.getLevel().intValue(),
