@@ -12,6 +12,8 @@ import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImp
 import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
+import io.younghwang.springframeworkbasic.user.sqlservice.SimpleSqlService;
+import io.younghwang.springframeworkbasic.user.sqlservice.SqlService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -38,11 +40,23 @@ public class TestApplicationContext {
     }
 
     @Bean
+    public SqlService sqlService() {
+        SimpleSqlService simpleSqlService = new SimpleSqlService();
+        Map<String, String> sqlMap = new HashMap();
+        sqlMap.put("userAdd", "insert into users(id, name, password, level, login, recommend, email) values (?, ?, ?, ?, ?, ?, ?)");
+        sqlMap.put("userGet", "select * from users where id = ?");
+        sqlMap.put("userDeleteAll", "delete from users");
+        sqlMap.put("userGetCount", "select count(*) from users");
+        sqlMap.put("userGetAll", "select * from users order by id");
+        sqlMap.put("userUpdate", "update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?");
+        simpleSqlService.setSqlMap(sqlMap);
+        return simpleSqlService;
+    }
+
+    @Bean
     public UserDao userDao() {
         UserDaoJdbc userDao = new UserDaoJdbc(dataSource());
-        Map<String, String> sqlMap = new HashMap();
-        sqlMap.put("add", "insert into users(id, name, password, level, login, recommend, email) values (?, ?, ?, ?, ?, ?, ?)");
-        userDao.setSqlMap(sqlMap);
+        userDao.setSqlService(sqlService());
         return userDao;
     }
 
