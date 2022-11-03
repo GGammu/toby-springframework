@@ -203,7 +203,7 @@ public class UserServiceTest {
 
     @Test
     @Transactional
-    @Rollback(false)
+//    @Rollback(false)
     void transactionSync() {
         DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
         TransactionStatus status = transactionManager.getTransaction(txDefinition);
