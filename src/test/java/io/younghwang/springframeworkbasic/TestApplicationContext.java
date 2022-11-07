@@ -43,6 +43,7 @@ public class TestApplicationContext {
     @Bean
     public XmlSqlService sqlService() {
         XmlSqlService xmlSqlService = new XmlSqlService();
+        xmlSqlService.setSqlMapFile("sqlmap.xml");
         return xmlSqlService;
     }
 

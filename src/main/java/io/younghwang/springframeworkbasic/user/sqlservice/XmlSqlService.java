@@ -3,6 +3,7 @@ package io.younghwang.springframeworkbasic.user.sqlservice;
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.Sqlmap;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -11,6 +12,11 @@ import java.util.Map;
 
 public class XmlSqlService implements SqlService {
     private Map<String, String> sqlMap = new HashMap<>();
+    private String sqlMapFile;
+
+    public void setSqlMapFile(String sqlMapFile) {
+        this.sqlMapFile = sqlMapFile;
+    }
 
     public XmlSqlService() {
         String contextPath = Sqlmap.class.getPackage().getName();
@@ -18,6 +24,19 @@ public class XmlSqlService implements SqlService {
             JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(UserDao.class.getResourceAsStream("sqlmap.xml"));
+            sqlmap.getSql().forEach(sql -> this.sqlMap.put(sql.getKey(), sql.getValue()));
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostConstruct
+    public void loadSql() {
+        String contextPath = Sqlmap.class.getPackage().getName();
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(contextPath);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(UserDao.class.getResourceAsStream(sqlMapFile));
             sqlmap.getSql().forEach(sql -> this.sqlMap.put(sql.getKey(), sql.getValue()));
         } catch (JAXBException e) {
             throw new RuntimeException(e);
