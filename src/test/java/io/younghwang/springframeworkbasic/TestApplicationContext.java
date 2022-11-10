@@ -12,7 +12,12 @@ import io.younghwang.springframeworkbasic.user.service.UserLevelUpgradePolicyImp
 import io.younghwang.springframeworkbasic.user.service.UserService;
 import io.younghwang.springframeworkbasic.user.service.UserServiceImpl;
 import io.younghwang.springframeworkbasic.user.service.UserServiceTest;
+import io.younghwang.springframeworkbasic.user.sqlservice.BaseSqlService;
+import io.younghwang.springframeworkbasic.user.sqlservice.HashMapSqlRegistry;
+import io.younghwang.springframeworkbasic.user.sqlservice.JaxbXmlSqlReader;
 import io.younghwang.springframeworkbasic.user.sqlservice.SimpleSqlService;
+import io.younghwang.springframeworkbasic.user.sqlservice.SqlReader;
+import io.younghwang.springframeworkbasic.user.sqlservice.SqlRegistry;
 import io.younghwang.springframeworkbasic.user.sqlservice.SqlService;
 import io.younghwang.springframeworkbasic.user.sqlservice.XmlSqlService;
 import org.springframework.context.annotation.Bean;
@@ -41,12 +46,23 @@ public class TestApplicationContext {
     }
 
     @Bean
-    public XmlSqlService sqlService() {
-        XmlSqlService xmlSqlService = new XmlSqlService();
-        xmlSqlService.setSqlReader(xmlSqlService);
-        xmlSqlService.setSqlRegistry(xmlSqlService);
-        xmlSqlService.setSqlMapFile("sqlmap.xml");
-        return xmlSqlService;
+    public SqlReader sqlReader() {
+        JaxbXmlSqlReader sqlReader = new JaxbXmlSqlReader();
+        sqlReader.setSqlMapFile("sqlmap.xml");
+        return sqlReader;
+    }
+
+    @Bean
+    public SqlRegistry sqlRegistry() {
+        return new HashMapSqlRegistry();
+    }
+
+    @Bean
+    public SqlService sqlService() {
+        BaseSqlService sqlService = new BaseSqlService();
+        sqlService.setSqlReader(sqlReader());
+        sqlService.setSqlRegistry(sqlRegistry());
+        return sqlService;
     }
 
     @Bean
