@@ -8,6 +8,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 public class JaxbXmlSqlReader implements SqlReader {
+    private static final String DEFAULT_SQLMAP_FILE = "sqlmap.xml";
+
+    private String sqlmapFile = DEFAULT_SQLMAP_FILE;
+
     private String sqlMapFile;
 
     public void setSqlMapFile(String sqlMapFile) {
