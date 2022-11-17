@@ -1,7 +1,10 @@
 package io.younghwang.springframeworkbasic.user.sqlservice;
 
+import io.younghwang.springframeworkbasic.user.dao.UserDao;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.SqlType;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.Sqlmap;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +29,10 @@ public class OxmSqlService implements SqlService {
         this.sqlRegistry = sqlRegistry;
     }
 
+    public void setSqlmap(Resource sqlmap) {
+        this.oxmSqlReader.setSqlmap(sqlmap);
+    }
+
     @PostConstruct
     public void loadSql() {
         this.baseSqlService.setSqlReader(this.oxmSqlReader);
@@ -46,8 +53,13 @@ public class OxmSqlService implements SqlService {
     }
 
     private class OxmSqlReader implements SqlReader {
+        private Resource sqlmap = new ClassPathResource("sqlmap.xml", UserDao.class);
         private Unmarshaller unmarshaller;
         private String sqlmapFile;
+
+        public void setSqlmap(Resource sqlmap) {
+            this.sqlmap = sqlmap;
+        }
 
         public void setUnmarshaller(Unmarshaller unmarshaller) {
             this.unmarshaller = unmarshaller;
@@ -59,8 +71,9 @@ public class OxmSqlService implements SqlService {
 
         @Override
         public void read(SqlRegistry registry) {
-            StreamSource xmlSource = new StreamSource(getClass().getResourceAsStream("sqlmap.xml"));
+//            StreamSource xmlSource = new StreamSource(getClass().getResourceAsStream("sqlmap.xml"));
             try {
+                StreamSource xmlSource = new StreamSource(this.sqlmap.getInputStream());
                 Sqlmap sqlmap = (Sqlmap) this.unmarshaller.unmarshal(xmlSource);
                 for (SqlType sql : sqlmap.getSql()) {
                     sqlRegistry.registry(sql.getKey(), sql.getValue());
