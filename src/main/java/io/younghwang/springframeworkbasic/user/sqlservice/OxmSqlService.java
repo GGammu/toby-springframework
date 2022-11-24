@@ -1,6 +1,7 @@
 package io.younghwang.springframeworkbasic.user.sqlservice;
 
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
+import io.younghwang.springframeworkbasic.user.exception.SqlNotFoundException;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.SqlType;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.Sqlmap;
 import org.springframework.core.io.ClassPathResource;
@@ -10,7 +11,6 @@ import org.springframework.oxm.Unmarshaller;
 import javax.annotation.PostConstruct;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class OxmSqlService implements SqlService {
     private final OxmSqlReader oxmSqlReader = new OxmSqlReader();
@@ -45,10 +45,8 @@ public class OxmSqlService implements SqlService {
     public String getSql(String key) throws SqlRetrievalFailureException {
         try {
             return this.sqlRegistry.findSql(key);
-        } catch (SQLException e) {
-            throw new SqlRetrievalFailureException("");
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (SqlNotFoundException e) {
+            throw new SqlNotFoundException("key");
         }
     }
 

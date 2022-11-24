@@ -1,5 +1,7 @@
 package io.younghwang.springframeworkbasic.user.sqlservice;
 
+import io.younghwang.springframeworkbasic.user.exception.SqlNotFoundException;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +15,7 @@ public class HashMapSqlRegistry implements SqlRegistry {
     }
 
     @Override
-    public String findSql(String key) throws SQLException {
+    public String findSql(String key) throws SqlNotFoundException {
         String sql = sqlMap.get(key);
         if (sql == null) {
             throw new SqlRetrievalFailureException(key + "를 이용해서 찾을 수 없습니다.");

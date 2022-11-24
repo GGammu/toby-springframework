@@ -1,6 +1,7 @@
 package io.younghwang.springframeworkbasic.user.sqlservice;
 
 import io.younghwang.springframeworkbasic.user.dao.UserDao;
+import io.younghwang.springframeworkbasic.user.exception.SqlNotFoundException;
 import io.younghwang.springframeworkbasic.user.sqlservice.jaxb.Sqlmap;
 
 import javax.annotation.PostConstruct;
@@ -56,7 +57,7 @@ public class XmlSqlService implements SqlService, SqlReader, SqlRegistry {
     }
 
     @Override
-    public String findSql(String key) throws SQLException {
+    public String findSql(String key) throws SqlNotFoundException {
         String sql = sqlMap.get(key);
         if (sql == null)
             throw new SqlRetrievalFailureException(key + "를 이용해서 SQL을 찾을 수 없습니다.");
@@ -67,8 +68,8 @@ public class XmlSqlService implements SqlService, SqlReader, SqlRegistry {
     public String getSql(String key) throws SqlRetrievalFailureException {
         try {
             return this.sqlRegistry.findSql(key);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (SqlNotFoundException e) {
+            throw new SqlNotFoundException(e);
         }
     }
 }
