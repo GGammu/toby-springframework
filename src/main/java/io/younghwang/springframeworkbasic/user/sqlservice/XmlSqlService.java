@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +68,7 @@ public class XmlSqlService implements SqlService, SqlReader, SqlRegistry {
         try {
             return this.sqlRegistry.findSql(key);
         } catch (SqlNotFoundException e) {
-            throw new SqlNotFoundException(e);
+            throw new SqlNotFoundException(key + "에 해당하는 SQL을 찾을 수 없습니다.", e);
         }
     }
 }
